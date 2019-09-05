@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Messiz的小站</title>
   
-  <subtitle>生活记录 学习总结</subtitle>
+  
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-09-05T07:31:41.570Z</updated>
+  <updated>2019-09-05T08:40:31.423Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -18,19 +18,19 @@
   
   <entry>
     <title>第一篇</title>
-    <link href="http://yoursite.com/2019/09/05/%E7%AC%AC%E4%B8%80%E7%AF%87/"/>
-    <id>http://yoursite.com/2019/09/05/第一篇/</id>
+    <link href="http://yoursite.com/post/73626faf.html"/>
+    <id>http://yoursite.com/post/73626faf.html</id>
     <published>2019-09-05T07:20:01.000Z</published>
-    <updated>2019-09-05T07:31:41.570Z</updated>
+    <updated>2019-09-05T08:40:31.423Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="第一次写博客"><a href="#第一次写博客" class="headerlink" title="第一次写博客"></a>第一次写博客</h1><pre><code>暑假最后几天，也不是心血来潮，用hexo搭建了一个blog，算是圆了一直以来的想法。作为一个初入大二的菜鸟程序员，想借助此博客总结学习经验，也能随时发一发牢骚，记录下自己的心路历程，也不算白白度过自己的大学生活。关于前端，我还知之甚少，仅凭上学期所学浅显的一点html、css和js绝不足以帮助我完整地搭建好这个博客，因此借鉴了不少网上大神的教程，好歹是弄出个样子了，在此也一并表示感谢了。目前还没有推广这个博客的想法，只是准备写给自己看，等日后内容丰富起来或许再分享给其他人也不迟吧。那么，就到这里吧，希望前两周的实习加油。</code></pre>]]></content>
+    <content type="html"><![CDATA[<h1 id="第一次写博客"><a href="#第一次写博客" class="headerlink" title="第一次写博客"></a>第一次写博客</h1><font size="5">暑假最后几天，也不是心血来潮，用hexo搭建了一个blog，算是圆了一直以来的想法。作为一个初入大二的菜鸟程序员，想借助此博客总结学习经验，也能随时发一发牢骚，记录下自己的心路历程，也不算白白度过自己的大学生活。关于前端，我还知之甚少，仅凭上学期所学浅显的一点html、css和js绝不足以帮助我完整地搭建好这个博客，因此借鉴了不少网上大神的教程，好歹是弄出个样子了，在此也一并表示感谢了。目前还没有推广这个博客的想法，只是准备写给自己看，等日后内容丰富起来或许再分享给其他人也不迟吧。那么，就到这里吧，希望前两周的实习加油。</font>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;h1 id=&quot;第一次写博客&quot;&gt;&lt;a href=&quot;#第一次写博客&quot; class=&quot;headerlink&quot; title=&quot;第一次写博客&quot;&gt;&lt;/a&gt;第一次写博客&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;暑假最后几天，也不是心血来潮，用hexo搭建了一个blog，算是圆了一直以来的想法。
-作为一
+        &lt;h1 id=&quot;第一次写博客&quot;&gt;&lt;a href=&quot;#第一次写博客&quot; class=&quot;headerlink&quot; title=&quot;第一次写博客&quot;&gt;&lt;/a&gt;第一次写博客&lt;/h1&gt;&lt;font size=&quot;5&quot;&gt;
+暑假最后几天，也不是心血来潮，用hexo搭建了一个blog，算是圆了一直以来的想法
       
     
     </summary>
@@ -44,10 +44,10 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://yoursite.com/2019/08/27/hello-world/"/>
-    <id>http://yoursite.com/2019/08/27/hello-world/</id>
+    <link href="http://yoursite.com/post/4a17b156.html"/>
+    <id>http://yoursite.com/post/4a17b156.html</id>
     <published>2019-08-27T09:42:44.100Z</published>
-    <updated>2019-08-27T11:11:49.740Z</updated>
+    <updated>2019-09-05T08:37:46.551Z</updated>
     
     <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
     
