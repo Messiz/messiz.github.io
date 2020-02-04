@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top">
   
   
-  <title>反思 | Hexo</title>
-  <meta name="description" content="今日反思 下午去自习室，一直坐到晚上8点，中途吃了晚饭。    效率真的好低，罪魁祸首是手机，中途断续看完了凌晨巴萨与多特的比赛。   做了5条高数竞赛题，学了3节线代。   明天又是满课的一天，晚上一定要坚持去图书馆。   拒绝手机！ 拒绝手机！ 拒绝手机！   说三遍以表决心。   晚安，早睡早起身体好。">
-<meta name="keywords" content="反思">
+  <title>stringstream复用中刷新缓冲区的问题 | Hexo</title>
+  <meta name="description" content="今天看书时遇到set的使用，于是将给的例子自己写了一遍，结果意外地发现了一些问题。  题目很简单： 123456789问题：输入文本，找出不同单词，按字典顺序从小到大输出，不区分大小写。样例输入：Adventures in DisneylandTwo blondes were going to Disneyland when they came to a fork in the road. Th">
+<meta name="keywords" content="-stringstream -c++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="反思">
-<meta property="og:url" content="http://yoursite.com/post/c39cb997.html">
+<meta property="og:title" content="stringstream复用中刷新缓冲区的问题">
+<meta property="og:url" content="http://yoursite.com/post/76b8cab7.html">
 <meta property="og:site_name" content="Messiz的小站">
-<meta property="og:description" content="今日反思 下午去自习室，一直坐到晚上8点，中途吃了晚饭。    效率真的好低，罪魁祸首是手机，中途断续看完了凌晨巴萨与多特的比赛。   做了5条高数竞赛题，学了3节线代。   明天又是满课的一天，晚上一定要坚持去图书馆。   拒绝手机！ 拒绝手机！ 拒绝手机！   说三遍以表决心。   晚安，早睡早起身体好。">
+<meta property="og:description" content="今天看书时遇到set的使用，于是将给的例子自己写了一遍，结果意外地发现了一些问题。  题目很简单： 123456789问题：输入文本，找出不同单词，按字典顺序从小到大输出，不区分大小写。样例输入：Adventures in DisneylandTwo blondes were going to Disneyland when they came to a fork in the road. Th">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-18T14:32:04.743Z">
+<meta property="og:updated_time" content="2020-02-04T11:26:01.070Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="反思">
-<meta name="twitter:description" content="今日反思 下午去自习室，一直坐到晚上8点，中途吃了晚饭。    效率真的好低，罪魁祸首是手机，中途断续看完了凌晨巴萨与多特的比赛。   做了5条高数竞赛题，学了3节线代。   明天又是满课的一天，晚上一定要坚持去图书馆。   拒绝手机！ 拒绝手机！ 拒绝手机！   说三遍以表决心。   晚安，早睡早起身体好。">
+<meta name="twitter:title" content="stringstream复用中刷新缓冲区的问题">
+<meta name="twitter:description" content="今天看书时遇到set的使用，于是将给的例子自己写了一遍，结果意外地发现了一些问题。  题目很简单： 123456789问题：输入文本，找出不同单词，按字典顺序从小到大输出，不区分大小写。样例输入：Adventures in DisneylandTwo blondes were going to Disneyland when they came to a fork in the road. Th">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/post/c39cb997.html">
+  <link rel="canonical" href="http://yoursite.com/post/76b8cab7.html">
   
     <link rel="alternate" href="/atom.xml" title="Messiz的小站" type="application/atom+xml">
   
@@ -306,25 +306,16 @@
 
   
   
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <nav id="toc" class="article-toc">
-      <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#今日反思"><span class="toc-number">1.</span> <span class="toc-text">今日反思</span></a></li></ol>
-    </nav>
-  </div>
-</aside>
-
 <main class="main" role="main">
   <div class="content">
-  <article id="post-反思" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-stringstream复用中刷新缓冲区的问题" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      反思
+      stringstream复用中刷新缓冲区的问题
     </h1>
   
 
@@ -332,41 +323,50 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/post/c39cb997.html" class="article-date">
-	  <time datetime="2019-09-18T14:11:13.000Z" itemprop="datePublished">2019-09-18</time>
+	<a href="/post/76b8cab7.html" class="article-date">
+	  <time datetime="2020-02-04T10:47:13.680Z" itemprop="datePublished">2020-02-04</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+    <a class="article-category-link" href="/categories/编程语言/">-编程语言</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link" href="/tags/反思/">反思</a>
+	<a class="article-tag-link" href="/tags/stringstream-c/">-stringstream -c++</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/post/c39cb997.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/post/76b8cab7.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="今日反思"><a href="#今日反思" class="headerlink" title="今日反思"></a>今日反思</h1><font size="3">
-下午去自习室，一直坐到晚上8点，中途吃了晚饭。  
+        <font size="5">
+今天看书时遇到set的使用，于是将给的例子自己写了一遍，结果意外地发现了一些问题。
 
-<p>效率真的好低，罪魁祸首是手机，中途断续看完了凌晨巴萨与多特的比赛。  </p>
-<p>做了5条高数竞赛题，学了3节线代。  </p>
-<p>明天又是满课的一天，晚上一定要坚持去图书馆。  </p>
-<p>拒绝手机！ 拒绝手机！ 拒绝手机！  </p>
-<p>说三遍以表决心。  </p>
-<p>晚安，早睡早起身体好。<br></p></font><p></p>
+<p>题目很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">问题：</span><br><span class="line">输入文本，找出不同单词，按字典顺序从小到大输出，不区分大小写。</span><br><span class="line"></span><br><span class="line">样例输入：</span><br><span class="line">Adventures in Disneyland</span><br><span class="line"></span><br><span class="line">Two blondes were going to Disneyland when they came to a fork in the road. The sign read:&quot;Disneyland Left.&quot;</span><br><span class="line"></span><br><span class="line">So they went home.</span><br></pre></td></tr></table></figure>
 
+<p>下面直接放上代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;set&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; dict;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">string</span> word, buff;</span><br><span class="line">	<span class="built_in">stringstream</span> sstream;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; word)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//循环处理一个输入的单词</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; word.size(); i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (<span class="built_in">isalpha</span>(word[i]))</span><br><span class="line">				word[i] = <span class="built_in">tolower</span>(word[i]);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				word[i] = <span class="string">' '</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//此处需清空stringstream的缓冲区，否则无法复用sstream读取多组数据</span></span><br><span class="line">		<span class="comment">//而.clear()方法不能真正做到清除，而会使内存越来越高，因此采用.str()方法</span></span><br><span class="line">		<span class="comment">//clear清空的是标志位，实际占用的内存并未释放！！！</span></span><br><span class="line">		<span class="comment">//先将其赋为空字符串""，再调用clear()方法</span></span><br><span class="line">		sstream.str(<span class="string">""</span>);</span><br><span class="line">		sstream.clear();</span><br><span class="line">		sstream &lt;&lt; word;	<span class="comment">//可能出现两个单词被标点连接，从而处理完为两个单词的情况，故使用stringstream</span></span><br><span class="line">		<span class="keyword">while</span> (sstream &gt;&gt; buff)</span><br><span class="line">			dict.insert(buff);	<span class="comment">//加入集合</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//输出结果（set模板类并没有定义[]，故需要通过迭代器来遍历）</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> it = dict.begin(); it != dict.end(); it++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; *it &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开始时没有这两行代码，结果输出只有一个单词</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sstream.str(<span class="string">""</span>);</span><br><span class="line">sstream.clear();</span><br></pre></td></tr></table></figure>
+
+<p>经过调试，发现是因为sstream是在前面定义的，第一次读取后，缓冲区一直没有刷新，所以后面的单词无法读入sstream。而书上的代码则在需要读入处每次都重新定义一个stringstream类型的变量，所以没有这个问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">ss</span><span class="params">(word)</span></span>;      <span class="comment">//书上该处的代码如是</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>经过一番搜索，找到了解决办法，即运用clear方法，但同时得知，clear方法仅仅清除了标志位，而对于实际的缓冲区内存并未做实际的释放处理。所以需要在clear之前手动将sstream赋值为空字符串，即：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sstream.str(<span class="string">""</span>);</span><br></pre></td></tr></table></figure>
+
+</font>
       
     </div>
     <div class="article-footer">
@@ -375,7 +375,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://yoursite.com/post/c39cb997.html" title="反思" target="_blank" rel="external">http://yoursite.com/post/c39cb997.html</a>
+      <a href="http://yoursite.com/post/76b8cab7.html" title="stringstream复用中刷新缓冲区的问题" target="_blank" rel="external">http://yoursite.com/post/76b8cab7.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -421,24 +421,11 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/post/88761908.html" title="最大子列问题"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/post/73626faf.html" title="第一篇"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/post/f569611.html" title="C++string类的使用"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
-    
-    <li class="toggle-toc">
-      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
-        <span>[&nbsp;</span><span>文章目录</span>
-        <i class="text-collapsed icon icon-anchor"></i>
-        <i class="text-in icon icon-close"></i>
-        <span>]</span>
-      </a>
-    </li>
     
   </ul>
   

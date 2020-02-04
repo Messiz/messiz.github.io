@@ -149,7 +149,7 @@ kbd,
 pre,
 samp {
   font-family: monospace,monospace;
-  font-size: 1em;
+  font-size: 3em;
 }
 
 button,
@@ -5531,7 +5531,7 @@ pre,
   margin: 10px 0;
   padding: 15px 10px;
   overflow: auto;
-  font-size: 13px;
+  font-size: 20px;
   color: #4d4d4c;
   line-height: 1.5;
 }
@@ -5920,7 +5920,7 @@ body.no-sidebar .sidebar {
 }
 
 .main .article-meta {
-  font-size: 13px;
+  font-size: 20px;
   color: #999;
 }
 
