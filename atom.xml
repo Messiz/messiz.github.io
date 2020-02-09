@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-04T11:26:01.070Z</updated>
+  <updated>2020-02-09T11:17:10.388Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,47 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>ATT汇编中mov指令</title>
+    <link href="http://yoursite.com/post/a068952b.html"/>
+    <id>http://yoursite.com/post/a068952b.html</id>
+    <published>2020-02-09T10:13:03.278Z</published>
+    <updated>2020-02-09T11:17:10.388Z</updated>
+    
+    <content type="html"><![CDATA[<font size="5"><lable style="color:lightblue; font-size:30px">mov语句简介</lable><br><br>mov指令用来实现数据的移动，一般后面会跟有两个操作数：源和目标<p>例如：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">movq %rax, %rsi</span><br></pre></td></tr></table></figure><p>在ATT格式的汇编代码中，前者为源，后者为目标，因此上述语句实现的是将%rax寄存器的内容传送到%rsi寄存器中。</p><lable style="color:lightblue; font-size:30px">操作数及类型对应的值</lable><br><br>有三种类型的操作数，分别为：- 立即数（immediate）：$0x1F- 寄存器（register）- 内存引用<p>寻址模式为：<br>Imm(r<sub>b</sub>，r<sub>i</sub>，s)</p><p>其中，Imm代表立即数，r<sub>b</sub>代表基址寄存器，r<sub>i</sub>代表变址寄存器，s是比例系数。<br>则操作数的值为：</p><p>M（Imm + r<sub>b</sub> 的值 + r<sub>i</sub>的值 * s）</p><p>其中M表示括号里的值对应的地址。</p><lable style="color:lightblue; font-size:30px">数据传送指令</lable><br><br><table><thead><tr><th>指令</th><th>描述</th></tr></thead><tbody><tr><td>MOV S, D</td><td>传送(S-&gt;D)</td></tr><tr><td>movb</td><td>传送字节</td></tr><tr><td>movw</td><td>传送字（两字节）</td></tr><tr><td>movl</td><td>传送双字（四字节）</td></tr><tr><td>movq</td><td>传送四字（八字节）</td></tr><tr><td>movabsq</td><td>传送绝对的四字</td></tr></tbody></table><p>注意点：</p><ol><li>movl指令以64位的寄存器为目标时，会自动将高32位（四字节）设置为0</li><li>其余语句均只改变其传送数据的字节，而不会补0，或进行符号扩展</li><li>movq语句实际上并不能传送64位，而只能传送32位，其高32位由低32位数据符号扩展而来</li><li>movabsq指令才能传送64位数据，但要注意，只能以寄存器为目标操作数</li></ol><p>0扩展指令：</p><table><thead><tr><th>指令</th><th>描述</th></tr></thead><tbody><tr><td>MOVZ S, D</td><td>零扩展传送(S-&gt;D)</td></tr><tr><td>movzbw</td><td>b-&gt;w</td></tr><tr><td>movzbl</td><td>b-&gt;l</td></tr><tr><td>movzbq</td><td>b-&gt;q</td></tr><tr><td>movzwl</td><td>w-&gt;l</td></tr><tr><td>movzwq</td><td>w-&gt;q</td></tr></tbody></table><p>上述指令中缺少了”movzlq”，但实际上并不需要，因为上面说到过，movl指令本身就实现了这个功能。</p><p>符号扩展：</p><table><thead><tr><th>指令</th><th>描述</th></tr></thead><tbody><tr><td>MOVS S, D</td><td>符号扩展传送(S-&gt;D)</td></tr><tr><td>movsbw</td><td>b-&gt;w</td></tr><tr><td>movsbl</td><td>b-&gt;l</td></tr><tr><td>movsbq</td><td>b-&gt;q</td></tr><tr><td>movswl</td><td>w-&gt;l</td></tr><tr><td>movswq</td><td>w-&gt;q</td></tr><tr><td>movslq</td><td>l-&gt;q</td></tr><tr><td>cltq</td><td>把%eax符号扩展到%rax</td></tr></tbody></table><p>注意：</p><ul><li>上述零扩展和符号扩展指令源操作数为寄存器或内存地址，目标操作数为寄存器</li></ul><lable style="color:lightblue; font-size:30px">判断mov指令后缀的方法</lable><br><br> <p>优先级按照以下几条规定：</p><ol><li>有寄存器按照寄存器大小</li><li>两个操作数都是寄存器则按照目标寄存器</li><li>其次是立即数大小</li><li>内存地址优先级最低</li></ol><p>终于总结完了<br>累~</p><p>END</p></font>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;font size=&quot;5&quot;&gt;
+&lt;lable style=&quot;color:lightblue; font-size:30px&quot;&gt;
+mov语句简介
+&lt;/lable&gt;
+&lt;br&gt;
+&lt;br&gt;
+mov指令用来实现数据的移动，一般后面会跟有两个操作数：源和目标
+
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;fig
+      
+    
+    </summary>
+    
+      <category term="编程语言" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+    
+    
+      <category term="ATT汇编" scheme="http://yoursite.com/tags/ATT%E6%B1%87%E7%BC%96/"/>
+    
+      <category term="mov指令" scheme="http://yoursite.com/tags/mov%E6%8C%87%E4%BB%A4/"/>
+    
+  </entry>
+  
+  <entry>
     <title>stringstream复用中刷新缓冲区的问题</title>
     <link href="http://yoursite.com/post/76b8cab7.html"/>
     <id>http://yoursite.com/post/76b8cab7.html</id>
     <published>2020-02-04T10:47:13.680Z</published>
-    <updated>2020-02-04T11:26:01.070Z</updated>
+    <updated>2020-02-09T11:17:59.795Z</updated>
     
     <content type="html"><![CDATA[<font size="5">今天看书时遇到set的使用，于是将给的例子自己写了一遍，结果意外地发现了一些问题。<p>题目很简单：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">问题：</span><br><span class="line">输入文本，找出不同单词，按字典顺序从小到大输出，不区分大小写。</span><br><span class="line"></span><br><span class="line">样例输入：</span><br><span class="line">Adventures in Disneyland</span><br><span class="line"></span><br><span class="line">Two blondes were going to Disneyland when they came to a fork in the road. The sign read:&quot;Disneyland Left.&quot;</span><br><span class="line"></span><br><span class="line">So they went home.</span><br></pre></td></tr></table></figure><p>下面直接放上代码：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;set&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; dict;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="built_in">string</span> word, buff;</span><br><span class="line"><span class="built_in">stringstream</span> sstream;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; word)</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">//循环处理一个输入的单词</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; word.size(); i++)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">isalpha</span>(word[i]))</span><br><span class="line">word[i] = <span class="built_in">tolower</span>(word[i]);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">word[i] = <span class="string">' '</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//此处需清空stringstream的缓冲区，否则无法复用sstream读取多组数据</span></span><br><span class="line"><span class="comment">//而.clear()方法不能真正做到清除，而会使内存越来越高，因此采用.str()方法</span></span><br><span class="line"><span class="comment">//clear清空的是标志位，实际占用的内存并未释放！！！</span></span><br><span class="line"><span class="comment">//先将其赋为空字符串""，再调用clear()方法</span></span><br><span class="line">sstream.str(<span class="string">""</span>);</span><br><span class="line">sstream.clear();</span><br><span class="line">sstream &lt;&lt; word;<span class="comment">//可能出现两个单词被标点连接，从而处理完为两个单词的情况，故使用stringstream</span></span><br><span class="line"><span class="keyword">while</span> (sstream &gt;&gt; buff)</span><br><span class="line">dict.insert(buff);<span class="comment">//加入集合</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出结果（set模板类并没有定义[]，故需要通过迭代器来遍历）</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> it = dict.begin(); it != dict.end(); it++)</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; *it &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>开始时没有这两行代码，结果输出只有一个单词</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sstream.str(<span class="string">""</span>);</span><br><span class="line">sstream.clear();</span><br></pre></td></tr></table></figure><p>经过调试，发现是因为sstream是在前面定义的，第一次读取后，缓冲区一直没有刷新，所以后面的单词无法读入sstream。而书上的代码则在需要读入处每次都重新定义一个stringstream类型的变量，所以没有这个问题。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">ss</span><span class="params">(word)</span></span>;      <span class="comment">//书上该处的代码如是</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>经过一番搜索，找到了解决办法，即运用clear方法，但同时得知，clear方法仅仅清除了标志位，而对于实际的缓冲区内存并未做实际的释放处理。所以需要在clear之前手动将sstream赋值为空字符串，即：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sstream.str(<span class="string">""</span>);</span><br></pre></td></tr></table></figure></font>]]></content>
     
@@ -38,10 +74,12 @@
     
     </summary>
     
-      <category term="-编程语言" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+      <category term="编程语言" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
     
     
-      <category term="-stringstream -c++" scheme="http://yoursite.com/tags/stringstream-c/"/>
+      <category term="stringstream" scheme="http://yoursite.com/tags/stringstream/"/>
+    
+      <category term="c++" scheme="http://yoursite.com/tags/c/"/>
     
   </entry>
   
@@ -50,7 +88,7 @@
     <link href="http://yoursite.com/post/f569611.html"/>
     <id>http://yoursite.com/post/f569611.html</id>
     <published>2020-01-24T09:26:41.000Z</published>
-    <updated>2020-02-03T04:15:57.001Z</updated>
+    <updated>2020-02-09T11:18:43.497Z</updated>
     
     <content type="html"><![CDATA[<font size="3">1.string类方法介绍<table><thead><tr><th align="center">方法名</th><th align="center">作用</th></tr></thead><tbody><tr><td align="center">= OR assign()</td><td align="center">赋值</td></tr><tr><td align="center">length() OR size()</td><td align="center">返回字符串长度</td></tr><tr><td align="center">substr()</td><td align="center">截取</td></tr><tr><td align="center">substr()</td><td align="center">截取</td></tr><tr><td align="center">substr()</td><td align="center">截取</td></tr><tr><td align="center">substr()</td><td align="center">截取</td></tr></tbody></table></font>]]></content>
     
@@ -74,10 +112,12 @@
     
     </summary>
     
-      <category term="-编程语言" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
+      <category term="编程语言" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"/>
     
     
-      <category term="-string类 -c++" scheme="http://yoursite.com/tags/string%E7%B1%BB-c/"/>
+      <category term="c++" scheme="http://yoursite.com/tags/c/"/>
+    
+      <category term="string类" scheme="http://yoursite.com/tags/string%E7%B1%BB/"/>
     
   </entry>
   
