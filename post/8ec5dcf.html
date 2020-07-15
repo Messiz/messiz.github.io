@@ -18,18 +18,18 @@
   
   
   <title>hdu2211_杀人游戏 | Hexo</title>
-  <meta name="description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找遍">
+  <meta name="description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 1不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找">
 <meta name="keywords" content="算法,学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hdu2211_杀人游戏">
 <meta property="og:url" content="http://yoursite.com/post/8ec5dcf.html">
 <meta property="og:site_name" content="Messiz的小站">
-<meta property="og:description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找遍">
+<meta property="og:description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 1不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-07-15T14:05:21.605Z">
+<meta property="og:updated_time" content="2020-07-15T14:09:15.439Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hdu2211_杀人游戏">
-<meta name="twitter:description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找遍">
+<meta name="twitter:description" content="终于考完了驾照，先开心一会儿~ 但是这也代表划水的日子到此为止了，大家都在不断努力，我也不能落后太多。  2211_杀人游戏 Problem Description 1不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/post/8ec5dcf.html">
   
@@ -354,11 +354,14 @@
 
 <p><strong>2211_杀人游戏</strong></p>
 <p><em>Problem Description</em></p>
-<p>不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找遍，然后继续从剩下的土匪中，编号从小到大找到第K个活着的土匪，然后杀掉。比如，现在有10个土匪，K为3，第一次杀掉3，6，9号的土匪，第二次杀掉4，8号土匪，第三次杀掉5号土匪，第四次杀掉7号土匪，第五次杀掉10号土匪，我们看到10号土匪是最后一个被杀掉的（从1到K-1的土匪运气好，不会被杀！）。现在给定你一个N和一个K，问你最后一个被杀掉的土匪的编号是多少。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不知道你是否玩过杀人游戏，这里的杀人游戏可没有法官，警察之类的人，只有土匪，现在已知有N个土匪站在一排，每个土匪都有一个编号，从1到N，每次杀人时给定一个K值，从还活着的土匪中，编号从小到大的找到K个人，然后杀掉，继续往下，直到找遍，然后继续从剩下的土匪中，编号从小到大找到第K个活着的土匪，然后杀掉。比如，现在有10个土匪，K为3，第一次杀掉3，6，9号的土匪，第二次杀掉4，8号土匪，第三次杀掉5号土匪，第四次杀掉7号土匪，第五次杀掉10号土匪，我们看到10号土匪是最后一个被杀掉的（从1到K-1的土匪运气好，不会被杀！）。现在给定你一个N和一个K，问你最后一个被杀掉的土匪的编号是多少。</span><br></pre></td></tr></table></figure>
+
 <p><em>Input</em></p>
-<p>第一行有一个T（T&lt;=10000），接下来有T组数据，每组中包含一个N（N&lt;2^31）和一个K（3&lt;=K&lt;=100&amp;&amp;K&lt;N）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第一行有一个T（T&lt;=10000），接下来有T组数据，每组中包含一个N（N&lt;2^31）和一个K（3&lt;=K&lt;=100&amp;&amp;K&lt;N）。</span><br></pre></td></tr></table></figure>
+
 <p><em>Output</em></p>
-<p>对于每组数据，输出最后被杀的土匪的编号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对于每组数据，输出最后被杀的土匪的编号。</span><br></pre></td></tr></table></figure>
+
 <hr>
 <p>没有做过的oj题型不能硬想，秉承着这个思想，我去搜索学习了相关的类题（真的不是偷懒orz）<br><br>其实相关的题目之前学校里做过，本质上是约瑟夫环类型的题目，但当时没有要求时间空间，采用的是最容易想到但也最慢的循环链表法。当然本题并不是循环，但原理差不多，可以采用递归的思路来解决，下面详细地分析一哈。</p>
 <p>从最后一轮开始分析，比如每次循环的k为3，最后一个被杀的编号一定就是k，也就是3。<br><br>往前推一轮，这个人的编号就变成了4。为什么呢？此人前面有两个人，而数到3就会被杀，那么如果最后一轮此人要在第3，则上一轮他前面还有一个人。<br><br>推广到一般情况，在某一轮此人的编号假设是x，那么上一轮他的编号是多少呢？其实很简单，由于前面有x-1个人，而每隔k-1个人就会被杀掉1个，那么前一轮此人之前一共被杀了(x-1) / (k-1)个人，就是数这一轮前面有多少个k-1人组，每个k-1人组就曾经被杀1人（上一轮是k人组）。由此就能得到最重要的递推关系式：</p>
