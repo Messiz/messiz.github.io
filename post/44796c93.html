@@ -26,13 +26,13 @@
 <meta property="og:site_name" content="Messiz的小站">
 <meta property="og:description" content="2214_函数图像 Problem Description 在数学中，我们经常会遇到，关于函数的问题，在画一些函数的图像的时候，最长用的方法就是“描点法”。 “描点法” 的具体步骤如下：  计算出函数在某些特定点的值 在坐标系中标记出这些点 用平滑的曲线连接这些点  但是，在实际的操作中，我们会发现，前两部的计算量还是相当大的，所以，我们想编写一个程序，能够在一个坐标系中直接的画出各点。 为了">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/post/images/2214_1.jpg">
-<meta property="og:image" content="http://yoursite.com/post/images/2214_2.png">
-<meta property="og:updated_time" content="2020-07-18T13:25:47.535Z">
+<meta property="og:image" content="http://yoursite.com/post/44796c93/2214_1.jpg">
+<meta property="og:image" content="http://yoursite.com/post/44796c93/2214_2.png">
+<meta property="og:updated_time" content="2020-07-18T13:45:54.919Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hdu2214_函数图像">
 <meta name="twitter:description" content="2214_函数图像 Problem Description 在数学中，我们经常会遇到，关于函数的问题，在画一些函数的图像的时候，最长用的方法就是“描点法”。 “描点法” 的具体步骤如下：  计算出函数在某些特定点的值 在坐标系中标记出这些点 用平滑的曲线连接这些点  但是，在实际的操作中，我们会发现，前两部的计算量还是相当大的，所以，我们想编写一个程序，能够在一个坐标系中直接的画出各点。 为了">
-<meta name="twitter:image" content="http://yoursite.com/post/images/2214_1.jpg">
+<meta name="twitter:image" content="http://yoursite.com/post/44796c93/2214_1.jpg">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/post/44796c93.html">
   
@@ -372,7 +372,7 @@
 <p>当x 的指数为0时，省略指数和x,   例如: y = 3x^3+2x^0   应表示为 y = 3x^3+2</p>
 <p>当x 的系数为负时,     例如: y = 3x^2 + (-1) x 应表示为 y = 3x^2 – x , y = 2x + (-2)   应表示为 y = 2x - 2</p>
 <p>在如下坐标系中画出，x属于[-30,30] 所对应y属于[-30,30]的图像。</p>
-<p><img src="images/2214_1.jpg" alt></p>
+<p><img src="/post/44796c93/2214_1.jpg" alt></p>
 <p><em>Input</em></p>
 <blockquote>
 <p>多组数据输入，每组数据的第一行给出一个n (1&lt;=n &lt;= 26) ，接下来的n行，每行有一个函数的表达式。</p>
@@ -386,7 +386,7 @@
 <p>2<br>y=-x-1<br>y=x^4+1-x^3</p>
 </blockquote>
 <p><em>Sample Output</em></p>
-<p><img src="images/2214_2.png" alt></p>
+<p><img src="/post/44796c93/2214_2.png" alt></p>
 <p>分析：</p>
 <p>题目的核心部分在于计算给定字符串的结果，可以将字符串根据+-号分割成各个部分，每个部分分别计算，最后求和即可得到最终结果。</p>
 <p>我采用了char[62][62]的二维数组来存放各个位置上的字符，通过初始化，将坐标轴以及箭头和xy等字符填入，其余部分填入空格。</p>
