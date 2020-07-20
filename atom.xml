@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-18T13:45:03.586Z</updated>
+  <updated>2020-07-20T10:15:35.560Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>hdu2201_熊猫阿波的故事</title>
+    <link href="http://yoursite.com/post/eab8d293.html"/>
+    <id>http://yoursite.com/post/eab8d293.html</id>
+    <published>2020-07-20T10:08:55.164Z</published>
+    <updated>2020-07-20T10:15:35.560Z</updated>
+    
+    <content type="html"><![CDATA[<font size="5"><p><strong>熊猫阿波的故事</strong></p><p><em>Problem Description</em></p><blockquote><p>凡看过功夫熊猫这部电影的人都会对影片中那只憨憨的熊猫阿波留下相当深的印象，胖胖的熊猫阿波自从打败了凶狠强悍的雪豹泰龙以后，在和平谷的地位是越来越高，成为谷中第一的功夫大师。并因此他父亲经营的面馆的生意也越来越好，店里每天都会有许多慕名而来吃面和想拜阿波为师的人。<br>一日，阿波收到了一张请柬，请柬里说在遥远的美国将召开全球比武大会，特邀请阿波过去做嘉宾。阿波当然很高兴，因为自己长这么大都还没出过和平谷，更何况是出国去那遥远的美国。于是他托人买了当晚的机票，阿波来到机场发现其他乘客们正准备按机票上的号码(1,2,3,…..,n)依次排队上飞机，由于阿波是第一次坐飞机，所以他想先一步登机，因此他插队第一个登上了飞机，并且他也不看机票，随机的选择了一个座位坐下了。乘客们都很气氛，他们想：既然阿波都不遵守规定，那么我为什么要遵守呢？因此后面所有的人也都随意地找了位置坐下来，并且坚决不让座给其他的乘客。<br>现在的问题是这样的：在这样的情况下，第i个乘客(除去熊猫阿波外)坐到原机票位置的概率是多少?</p></blockquote><p><em>Input</em></p><blockquote><p>输入包含多组测试数据，每组数据占一行，包含两个整数，分别是n和m(n&gt;=m)，n表示共有n个乘客(包括阿波)，m表示第m个乘客。</p></blockquote><p><em>Output</em></p><blockquote><p>对于每组数据，请输出第m个乘客(除去熊猫阿波外)坐到原机票位置的概率是多少?(结果保留2位小数)<br>每组输出占一行。</p></blockquote><p><em>Sample Input</em></p><blockquote><p>2 1<br>11 3</p></blockquote><p><em>Sample Output</em></p><blockquote><p>0.50<br>0.09</p></blockquote><p>十分简单，学过概率论的人都知道，抽签先后的概率都是一样的，由此只要用 1 /<br> n 即可得到答案。</p><p> 本题对我来说难点在于四舍五入并且控制小数位数输出。</p><p> c++中可以包含iomanip头文件，并且cout &lt;&lt; fixed &lt;&lt; setprecision(2);来控制输出两位小数。</p><p> 其中，fixed用来指示控制小数部分，而setprecision(n)用于控制输出位数为n，它本来是控制整个数字的位数，但在fixed的作用下作用于小数。</p><p> 下面是代码：<br> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">int</span> n, m;</span><br><span class="line"><span class="keyword">double</span> res;</span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m)</span><br><span class="line">&#123;</span><br><span class="line">res = <span class="number">1.0</span> / n;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; fixed &lt;&lt; setprecision(<span class="number">2</span>) &lt;&lt; res &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p> </font>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;font size=&quot;5&quot;&gt;
+
+&lt;p&gt;&lt;strong&gt;熊猫阿波的故事&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Problem Description&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;凡看过功夫熊猫这部电影的人都会对影片中那只憨憨的熊猫阿波留下相当深的印象，胖胖
+      
+    
+    </summary>
+    
+      <category term="oj" scheme="http://yoursite.com/categories/oj/"/>
+    
+    
+      <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="学习" scheme="http://yoursite.com/tags/%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
   
   <entry>
     <title>一个字母引发的惨案</title>
