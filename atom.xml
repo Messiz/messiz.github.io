@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-09-08T08:31:10.009Z</updated>
+  <updated>2020-09-22T06:52:45.967Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>欧几里得算法</title>
+    <link href="http://yoursite.com/post/b511dfae.html"/>
+    <id>http://yoursite.com/post/b511dfae.html</id>
+    <published>2020-09-16T13:28:53.441Z</published>
+    <updated>2020-09-22T06:52:45.967Z</updated>
+    
+    <content type="html"><![CDATA[<font size="5"><p>欧几里得算法，又叫做辗转相除法，是用来解决求两个数的最大公约数的经典算法。用gcd(a,b)来表示两个数的最大公约数。则此算法可以用递推式：</p><blockquote><blockquote><p>gcd(a,b) = gcd(b,a%b)</p></blockquote></blockquote><p>来表示。含义是，要求a，b的最大公约数，只需要求b和a%b的最大公约数即可。</p><hr><p><em>证明</em><br>下面给出证明过程：</p><p>设 a = b * q + r，证明gcd(a, b) = gcd(b, r)。<br><br>由于gcd(a, b)为a，b的公约数，所以设a = m*gcd(a, b), b = n*gcd(a, b)。<br><br>r = a-b*q = m*gcd(a, b) - n*q*gcd(a, b) = (m-n*q)*gcd(a, b)<br><br>所以可得gcd(a,b)是r的因数。<br><br>由于gcd(b, r)为b，r的公约数，所以设b = x*gcd(b, r), r = y*gcd(b, r)。<br><br>a = y*gcd(b, r) + x*q*gcd(b, r) = (y+x*q)*gcd(b, r)<br><br>所以可得gcd(b, r)是a的因数。<br><br>因为gcd(a, b)同时是r和b的因数，所以gcd(a, b)是b和r的公因数（但不一定最大），所以有：</p><blockquote><blockquote><p>gcd(a, b) &lt;= gcd(b, r)</p></blockquote></blockquote><p>同理可得：</p><blockquote><blockquote><p>gcd(b, r) &lt;= gcd(a, b)</p></blockquote></blockquote><p>通过两式联立可知：</p><blockquote><blockquote><p>gcd(a, b) = gcd(b, r)</p></blockquote></blockquote><p>证明完毕。</p><hr><p><em>代码实现</em></p><p>由于给出了递推关系，那么递归的思路是最容易想到的</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">gcd_recursion</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> a, <span class="keyword">unsigned</span> <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> b == <span class="number">0</span> ? a : gcd_recursion(b, a%b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>递归基是b等于0，此时a即为最大公约数</p><p>非递归则可以通过循环实现</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">gcd_iteration</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> a, <span class="keyword">unsigned</span> <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> tmp;</span><br><span class="line"><span class="keyword">while</span> (b != <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">tmp = a % b;</span><br><span class="line">a = b;</span><br><span class="line">b = tmp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></font>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;font size=&quot;5&quot;&gt;
+
+&lt;p&gt;欧几里得算法，又叫做辗转相除法，是用来解决求两个数的最大公约数的经典算法。用gcd(a,b)来表示两个数的最大公约数。则此算法可以用递推式：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;gcd(a,b) = gcd(b
+      
+    
+    </summary>
+    
+      <category term="算法" scheme="http://yoursite.com/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="学习" scheme="http://yoursite.com/tags/%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
   
   <entry>
     <title>java考试题</title>
