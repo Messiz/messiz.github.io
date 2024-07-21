@@ -1,3 +1,3 @@
-[submodule "Messiz/hugo-theme-stack"]
-	path = Messiz/hugo-theme-stack
+[submodule "themes/hugo-theme-stack"]
+	path = themes/hugo-theme-stack
 	url = https://github.com/Messiz/hugo-theme-stack/
