@@ -7,7 +7,234 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Messiz</copyright>
-        <lastBuildDate>Wed, 09 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 18 Sep 2024 02:15:02 +0800</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Raft</title>
+        <link>http://localhost:1313/p/raft/</link>
+        <pubDate>Wed, 18 Sep 2024 02:15:02 +0800</pubDate>
+        
+        <guid>http://localhost:1313/p/raft/</guid>
+        <description>&lt;h1 id=&#34;raft&#34;&gt;Raft
+&lt;/h1&gt;&lt;h2 id=&#34;脑裂&#34;&gt;脑裂
+&lt;/h2&gt;&lt;p&gt;对于MapReduce、GFS等分布式系统，都是一个Master节点与很多副节点组成的。这种单主结构足够简单，不会出现矛盾（毕竟master自己不会反对自己），但也带来了问题——一旦这个节点崩溃，那么整个系统不能正常工作。&lt;/p&gt;
+&lt;p&gt;以Test-and-Set为例：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212630.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;实际上是单点的，我们为了提高系统的容错性，设计一个多副本的Test-and-Set服务（S1和S2）。&lt;/p&gt;
+&lt;p&gt;现在，我们来假设我们有一个网络，这个网络里面有两个服务器（S1，S2），这两个服务器都是我们Test-and-Set服务的拷贝。这个网络里面还有两个客户端（C1，C2），它们需要通过Test-and-Set服务确定主节点是谁。在这个例子中，这两个客户端本身就是VMware FT中的Primary和Backup虚拟机。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果我们规定client需要与两个server同时交互，那么会比单点更糟糕，因为一旦一个server崩溃，则不能正常服务，导致有副本系统反而没有容错性；&lt;/li&gt;
+&lt;li&gt;如果我们规定只与其中一个server交互即可，则会发生脑裂。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当时（1980s）解决脑裂大致两种方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;构建不会出错的“网络”&lt;/li&gt;
+&lt;li&gt;人工解决问题，出现问题时，停止提供服务，由人工检查问题&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;过半票决majority-vote&#34;&gt;过半票决（Majority Vote）
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;完成任何操作，都需要过半的服务器（总服务器数的一半以上）批准来完成对应操作。&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;服务器总数应该为&lt;strong&gt;奇数&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;假设系统有2*F+1个服务器，那么系统最多可接受F个服务器故障（F+1个服务器正常运行），仍然可以正常工作；&lt;/li&gt;
+&lt;li&gt;过半票决的一个特性是：&lt;strong&gt;每一个操作对应的过半服务器，必然至少包含一个服务器存在于上一个操作的过半服务器中&lt;/strong&gt;。下面的例子说明了这一点：
+&lt;ul&gt;
+&lt;li&gt;过半票决系统的一个特性就是，最多只有一个网络分区会有过半的服务器，所以我们不可能有两个分区可以同时完成操作。这里背后更微妙的点在于，如果你总是需要过半的服务器才能完成任何操作，同时你有一系列的操作需要完成，其中的每一个操作都需要过半的服务器来批准，例如选举Raft的Leader，那么&lt;strong&gt;每一个操作对应的过半服务器，必然至少包含一个服务器存在于上一个操作的过半服务器中。也就是说，任意两组过半服务器，至少有一个服务器是重叠的。&lt;strong&gt;实际上，相比其他特性，Raft更依赖这个特性来避免脑裂。例如，当一个Raft Leader竞选成功，那么这个Leader必然凑够了&lt;/strong&gt;过半服务器的选票&lt;/strong&gt;，而这组过半服务器中，&lt;strong&gt;必然与旧Leader的过半服务器有重叠&lt;/strong&gt;。所以，新的Leader必然知道旧Leader使用的任期号（term number），因为新Leader的过半服务器必然与旧Leader的过半服务器有重叠，而旧Leader的过半服务器中的每一个&lt;strong&gt;必然都知道旧Leader的任期号&lt;/strong&gt;。类似的，任何旧Leader提交的操作，必然存在于过半的Raft服务器中，而任何新Leader的过半服务器中，必然有至少一个服务器包含了旧Leader的所有操作。这是Raft能正确运行的一个重要因素。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;raft初探&#34;&gt;Raft初探
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212635.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Raft作为Library运行在服务中，为服务提供一致性保证。如上图，一个服务的副本由两部分组成：上半部分是&lt;strong&gt;应用程序（APP）（上图中是一个KV Server）&lt;/strong&gt;，下半部分是&lt;strong&gt;Raft库&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;执行流程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Client发送请求至Leader节点的APP；&lt;/li&gt;
+&lt;li&gt;APP将Client请求向下发送至Raft层，Raft层将操作存入日志；&lt;/li&gt;
+&lt;li&gt;Raft将此操作发送值所有副本；&lt;/li&gt;
+&lt;li&gt;当Leader得知过半的阶段都有了这个操作的拷贝后，发送消息至上层APP，告知APP可以实际执行这个操作了；此后所有其他副本都将操作提交至本地的APP执行，理想情况下，整个系统的所有副本都执行了此操作，APP与Raft状态应都保持一致。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;log同步时序&#34;&gt;Log同步时序
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212638.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在系统正常工作没有故障时，Raft Log 同步流程的时序图如上：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Client发送请求；&lt;/li&gt;
+&lt;li&gt;Leader向其余所有副本同步消息（&lt;strong&gt;AppendEntries RPC&lt;/strong&gt;，用于日志同步与心跳信号传递）；&lt;/li&gt;
+&lt;li&gt;待收到超半数的确认后提交（对于上面三个副本的系统，包括Leader自身只需要额外收到一个节点的确认即可）；&lt;/li&gt;
+&lt;li&gt;Leader将提交的消息同步给其他副本，通知它们可以提交操作（在Raft中，没有单独的提交信息，commit消息是携带在下一次的AppendEntries RPC中的）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;日志raft-log&#34;&gt;日志（Raft Log）
+&lt;/h2&gt;&lt;p&gt;日志的作用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Leader用来对&lt;strong&gt;操作进行排序&lt;/strong&gt;，这对于复制状态机十分重要；&lt;/li&gt;
+&lt;li&gt;Follower用于&lt;strong&gt;临时存储操作&lt;/strong&gt;，待收到Leader的commit消息执行操作；&lt;/li&gt;
+&lt;li&gt;Leader中存放操作，如果因为网络或其他问题导致副本没有收到消息，可以进行&lt;strong&gt;消息重传&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;所有节点都会将Log持久化，这有助于节点&lt;strong&gt;故障后恢复状&lt;/strong&gt;态。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;leader选举leader-election&#34;&gt;Leader选举（Leader Election）
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Raft中设置Leader的好处在于，对于一个请求，存在Leader的情况下，只需一轮交互即可取得过半服务器的确认，而对于无Leader系统，通常需要一轮消息确认一个临时Leader，第二轮消息才能实际确认请求，性能更高；&lt;/li&gt;
+&lt;li&gt;在Raft生命周期中，通过**任期号（term number）**来区分不同的Leader，每个任期内最多只有一个Leader（可能没有或者有一个）；&lt;/li&gt;
+&lt;li&gt;每个Raft节点都有一个&lt;strong&gt;选举定时器（Election Timer）&lt;/strong&gt;，当此定时器时间耗尽之前，没有收到任何来自Leader的消息，则认为Leader已经下线，并开始一次新的选举；
+&lt;ul&gt;
+&lt;li&gt;任何一条AppendEntries消息的到达都会重置选举定时器，因此，在网络正常且节点无故障的情况下，不会进行新的选举；&lt;/li&gt;
+&lt;li&gt;选举失败可能的情况：
+&lt;ul&gt;
+&lt;li&gt;可投票节点不足（网络故障或服务器关机等）&lt;/li&gt;
+&lt;li&gt;分割选票（Split Vote）：如果若干节点选举定时器同时到期，同时都发出了RequestVote消息，这造成所有这些节点都无法获得足够的选票，就会导致这次选举失败。Raft不能完全避免这种情况发生，但是可以大大降低发生概率：&lt;strong&gt;为选举定时器随机选择超时时间，以降低多个节点同时超时的发生概率。&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;超时时间选择：&lt;strong&gt;下限&lt;/strong&gt;不能低于一个心跳间隔，否则会一直超时，通常可以设置为2-3个心跳时间；&lt;strong&gt;上限&lt;/strong&gt;选择取决于期望的故障恢复速度，同时要保证随机的超时时间间隔足够完成选举。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;开始一次选举时，当前服务器会&lt;strong&gt;增加任期号（term number）&lt;/strong&gt;，并发出&lt;strong&gt;请求投票（RequestVote）RPC&lt;/strong&gt;，这个消息会发送至其他所有节点（因为自己总会投票给自己）；&lt;/li&gt;
+&lt;li&gt;相同的，选举视为一次操作的话，也需要获得超半数的同意票才能当选。每个Raft节点在一个任期内只会进行一次投票，保证了一次选举最多只会当选一个Leader；&lt;/li&gt;
+&lt;li&gt;当选的Leader会立刻发送AppendEntries告知其他所有节点，当然不是直接写“我当选了Leader！”，而是附带上当前任期号，而由于Raft规定，对于某个任期，只有Leader才能发出AppendEntries消息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;系统故障下的机制&#34;&gt;系统故障下的机制
+&lt;/h2&gt;&lt;h3 id=&#34;日志恢复log-backup&#34;&gt;日志恢复（Log Backup）
+&lt;/h3&gt;&lt;p&gt;当Raft系统发生故障时，可能系统中不同节点中保存的log不一致，下面举例说明：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;服务器&lt;/th&gt;
+&lt;th&gt;Slot 10&lt;/th&gt;
+&lt;th&gt;Slot 11&lt;/th&gt;
+&lt;th&gt;Slot 12&lt;/th&gt;
+&lt;th&gt;Slot 13&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;S1&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;S2&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;S3&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;6&lt;/font&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ol&gt;
+&lt;li&gt;有S1、S2、S3三个服务器，在任期3中，第一次请求三者都成功记录，第二次请求只有S2、S3记录，S1记录失败，包含三种情况（假设S3是任期3的Leader）：
+&lt;ul&gt;
+&lt;li&gt;发送给S1的消息丢了&lt;/li&gt;
+&lt;li&gt;S1当时已经关机了&lt;/li&gt;
+&lt;li&gt;S3在向S2发送完AppendEntries之后，在向S1发送AppendEntries之前故障了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;继续往后看：
+&lt;ul&gt;
+&lt;li&gt;S2称为Leader后接受一个请求后崩溃，需要进行重新选举&lt;/li&gt;
+&lt;li&gt;S3成功当选，获得请求，并且崩溃&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;假设下一个任期是6，并且S3当选Leader，S3会发送任期6的第一个AppendEntries RPC给其他两个follower，其中不仅包括本条log相关信息，还包括：
+&lt;ul&gt;
+&lt;li&gt;prevLogIndex 前一项log的槽位&lt;/li&gt;
+&lt;li&gt;prevLogTerm 前一项log的Term number&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;S2检查是否匹配，结果发现自己前一项Log的任期为4而非5，因此会拒绝这个AppendEntries RPC，并返回False给Leader S3，S1前一项没有值，因此也将拒绝这个AE RPC。&lt;/li&gt;
+&lt;li&gt;Leader中还维护了Follower的nextIndex，nextIndex的初始值为新当选的Leader的最后一条日志位置，在上例中就是13。而由于Leader收到两个Follower的False，则会减小对应的nextIndex，此时nextIndex=12，prevLogIndex=11，prevLogTerm=3，此时发送的AE消息包含了prevLogIndex后的所有条目（也就是12，13两个槽的内容）。&lt;/li&gt;
+&lt;li&gt;此时S2发现prevLogIndex和prevLogTerm与自己记录相符，则接受此AE，并将后续的数据写入自己Log的相同位置（删除了Slot 12中的4，这是安全的因为4没有被commit）。&lt;/li&gt;
+&lt;li&gt;S1此时仍不符合，因此还是拒绝。&lt;/li&gt;
+&lt;li&gt;Leader重复前面的流程，直至S1也确认AE，并将正确Log写入。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;快速恢复fast-backup&#34;&gt;快速恢复（Fast Backup）
+&lt;/h3&gt;&lt;p&gt;如果Follower进度和Leader差太多（例如：差1000个任期），此时进行日志恢复就会造成巨大的时间开销（需要发送1000条AE）。&lt;/p&gt;
+&lt;p&gt;一种快速恢复策略如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在新Leader发送第一个AE后，每个Follower回复都附带上一些额外信息：
+&lt;ul&gt;
+&lt;li&gt;XTerm：Follower中与Leader冲突的Log对应的任期号。在之前有介绍Leader会在prevLogTerm中带上本地Log记录中，前一条Log的任期号。如果Follower在对应位置的任期号不匹配，它会拒绝Leader的AppendEntries消息，并将自己的任期号放在XTerm中。如果Follower在对应位置没有Log，那么这里会返回 -1。&lt;/li&gt;
+&lt;li&gt;XIndex：这个是Follower中，对应任期号为XTerm的第一条Log条目的槽位号。&lt;/li&gt;
+&lt;li&gt;XLen：如果Follower在对应位置没有Log，那么XTerm会返回-1，XLen表示空白的Log槽位数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面假设三个场景&lt;br&gt;
+&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212648.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Case 1：Follower（S1）会返回XTerm=5，XIndex=2。Leader（S2）发现自己没有任期5的日志，它会将自己本地记录的，S1的nextIndex设置到XIndex，也就是S1中，任期5的第一条Log对应的槽位号。所以，如果Leader完全没有XTerm的任何Log，那么它应该回退到XIndex对应的位置（这样，Leader发出的下一条AppendEntries就可以一次覆盖S1中所有XTerm对应的Log）。&lt;/li&gt;
+&lt;li&gt;Case 2。Follower（S1）会返回XTerm=4，XIndex=1。Leader（S2）发现自己其实有任期4的日志，它会将自己本地记录的S1的nextIndex设置到本地在XTerm位置的Log条目后面，也就是槽位2。下一次Leader发出下一条AppendEntries时，就可以一次覆盖S1中槽位2和槽位3对应的Log。&lt;/li&gt;
+&lt;li&gt;Case 3。Follower（S1）会返回XTerm=-1，XLen=2。这表示S1中日志太短了，以至于在冲突的位置没有Log条目，Leader应该回退到Follower最后一条Log条目的下一条，也就是槽位2，并从这开始发送AppendEntries消息。槽位2可以从XLen中的数值计算得到。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;选举约束election-restriction&#34;&gt;选举约束（election Restriction）
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;候选人最后一条Log条目的任期号&lt;strong&gt;大于&lt;/strong&gt;本地最后一条Log条目的任期号；&lt;/li&gt;
+&lt;li&gt;或者，候选人最后一条Log条目的任期号&lt;strong&gt;等于&lt;/strong&gt;本地最后一条Log条目的任期号，且候选人的Log记录长度&lt;strong&gt;大于等于&lt;/strong&gt;本地Log记录的长度&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;持久化persistence&#34;&gt;持久化（Persistence）
+&lt;/h3&gt;&lt;p&gt;Raft持久化存储三种数据：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Log：Log记录APP的所有操作，Raft并没有规定持久化APP的运行状态，因此，Log是唯一保存APP状态的数据，当从故障恢复时，可以从Log逐条读取数据恢复APP状态；&lt;/li&gt;
+&lt;li&gt;currentTerm：与voteFor保证Leader选举的正确性，新的Leader需要知道正确的Term number，假设前一个Leader故障，而剩下的两个Follower缺失一些Log，导致不知道正确Term，那么重新选举会造成新Leader存储错误Term number；&lt;/li&gt;
+&lt;li&gt;voteFor：不存储voteFor会造成重复投票，造成脑裂。S1为S2投完票后故障，恢复后又收到S3的投票请求，而认为自己没有投过票，又给S3投票，可能造成两个Leader的情况发生。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;日志快照log-snapshot&#34;&gt;日志快照（Log Snapshot）
+&lt;/h3&gt;&lt;p&gt;Raft系统长时间运行会造成Log内容过多的情况，这对于持久化以及故障后恢复的效率会产生较大影响。因此，提出快照（Snapshots）。&lt;/p&gt;
+&lt;p&gt;当Raft判断Log大小达到某个阈值时，会要求程序在Log的特定位置上，对其状态做一个快照，然后Raft丢弃这一点之前的Log。&lt;/p&gt;
+&lt;p&gt;可能出现的问题：当Follower落后太多，以至于Leader产生快照丢弃的Log无法恢复时，Leader和Follower的一致性会遭到破坏。&lt;/p&gt;
+&lt;p&gt;Raft的解决方案如下：&lt;/p&gt;
+&lt;p&gt;引入一个新的消息类型，InstallSnapshot RPC&lt;/p&gt;
+&lt;p&gt;当Follower刚刚恢复，如果它的Log短于Leader通过 AppendEntries RPC发给它的内容，那么它首先会强制Leader回退自己的Log。在某个点，Leader将不能再回退，因为它已经到了自己Log的起点。这时，Leader会将自己的快照发给Follower，之后立即通过AppendEntries将后面的Log发给Follower。&lt;/p&gt;
+&lt;h3 id=&#34;线性一致linearizability&#34;&gt;线性一致（Linearizability）
+&lt;/h3&gt;&lt;p&gt;线性一致或者说强一致，定义了一个分布式系统正确的处理逻辑，在客户端看来，就和与单点服务交互一样。&lt;/p&gt;
+&lt;p&gt;**定义：一个系统是线性一致的，**&lt;strong&gt;如果执行历史整体可以按照一个顺序排列，且排列顺序与客户端请求的实际时间相符合；并且，每一个读操作都看到的是最近一次写入的值。&lt;/strong&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Lab-1 MapReduce</title>
+        <link>http://localhost:1313/p/lab-1-mapreduce/</link>
+        <pubDate>Tue, 17 Sep 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/p/lab-1-mapreduce/</guid>
+        <description>&lt;img src="http://localhost:1313/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash.jpg" alt="Featured image of post Lab-1 MapReduce" /&gt;&lt;h2 id=&#34;测试&#34;&gt;测试
+&lt;/h2&gt;&lt;p&gt;123123123123&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Chinese Test</title>
         <link>http://localhost:1313/p/test-chinese/</link>
         <pubDate>Wed, 09 Sep 2020 00:00:00 +0000</pubDate>

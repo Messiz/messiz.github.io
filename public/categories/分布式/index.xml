@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>分布式 on Messiz Blog</title>
+        <link>http://localhost:1313/categories/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+        <description>Recent content in 分布式 on Messiz Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>Messiz</copyright>
+        <lastBuildDate>Tue, 17 Sep 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/%E5%88%86%E5%B8%83%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Lab-1 MapReduce</title>
+        <link>http://localhost:1313/p/lab-1-mapreduce/</link>
+        <pubDate>Tue, 17 Sep 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/p/lab-1-mapreduce/</guid>
+        <description>&lt;img src="http://localhost:1313/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash.jpg" alt="Featured image of post Lab-1 MapReduce" /&gt;&lt;h2 id=&#34;测试&#34;&gt;测试
+&lt;/h2&gt;&lt;p&gt;123123123123&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
