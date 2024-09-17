@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="哈工大操作系统实验">
+<title>操作系统实验学习记录（2）</title>
+
+<link rel='canonical' href='http://localhost:1313/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952/'>
+
+<link rel="stylesheet" href="/scss/style.min.e8c7fca7d1c9294aa7a4f3426c225ee26540f7d94e39be0b5a4a5c8a49ca5a25.css"><meta property='og:title' content="操作系统实验学习记录（2）">
+<meta property='og:description' content="哈工大操作系统实验">
+<meta property='og:url' content='http://localhost:1313/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952/'>
+<meta property='og:site_name' content='Messiz Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-07-22T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-07-22T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="操作系统实验学习记录（2）">
+<meta name="twitter:description" content="哈工大操作系统实验">
+    <link rel="shortcut icon" href="/favicon-16x16.png" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/laya_huc75b82ffcff8acc7c63d52042ec4f01c_17252_300x0_resize_q75_box.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐦‍🔥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Messiz Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/24974985'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px">
+	<path fill="none" d="M36.5,12h-7.086l3.793-3.793c0.391-0.391,0.391-1.023,0-1.414s-1.023-0.391-1.414,0L26.586,12 h-5.172l-5.207-5.207c-0.391-0.391-1.023-0.391-1.414,0s-0.391,1.023,0,1.414L18.586,12H12.5C9.467,12,7,14.467,7,17.5v15 c0,3.033,2.467,5.5,5.5,5.5h2c0,0.829,0.671,1.5,1.5,1.5s1.5-0.671,1.5-1.5h14c0,0.829,0.671,1.5,1.5,1.5s1.5-0.671,1.5-1.5h2 c3.033,0,5.5-2.467,5.5-5.5v-15C42,14.467,39.533,12,36.5,12z M39,32.5c0,1.378-1.122,2.5-2.5,2.5h-24c-1.378,0-2.5-1.122-2.5-2.5 v-15c0-1.378,1.122-2.5,2.5-2.5h24c1.378,0,2.5,1.122,2.5,2.5V32.5z" />
+	<rect width="2.75" height="7.075" x="30.625" y="18.463" fill="#1e88e5" transform="rotate(-71.567 32.001 22)" />
+	<rect width="7.075" height="2.75" x="14.463" y="20.625" fill="#1e88e5" transform="rotate(-18.432 17.998 21.997)" />
+	<path fill="none" d="M28.033,27.526c-0.189,0.593-0.644,0.896-1.326,0.896c-0.076-0.013-0.139-0.013-0.24-0.025 c-0.013,0-0.05-0.013-0.063,0c-0.341-0.05-0.745-0.177-1.061-0.467c-0.366-0.265-0.808-0.745-0.947-1.477 c0,0-0.29,1.174-0.896,1.49c-0.076,0.05-0.164,0.114-0.253,0.164l-0.038,0.025c-0.303,0.164-0.682,0.265-1.086,0.278 c-0.568-0.051-0.947-0.328-1.136-0.821l-0.063-0.164l-1.427,0.656l0.05,0.139c0.467,1.124,1.465,1.768,2.74,1.768 c0.922,0,1.667-0.303,2.209-0.909c0.556,0.606,1.288,0.909,2.209,0.909c1.856,0,2.55-1.288,2.765-1.843l0.051-0.126l-1.427-0.657 L28.033,27.526z" />
+</svg>
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Messiz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/en/" >English</option>
+                                
+                                    <option value="http://localhost:1313/" selected>中文</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/os/" >
+                OS
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952/">操作系统实验学习记录（2）</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            哈工大操作系统实验
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 22, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 9 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    
+    <p>操作系统实验2，和第一次实验时间隔得稍微久了那么亿点点。。不要在意这些细节，赶紧进入正题（掩盖自己懒的事实）\</p>
+<hr>
+<p>首先阐明本实验的目的：实现系统调用<br>
+<br>
+要实现一个系统调用，首先得明白从用户输入命令，到系统调用相应的函数，最终完成功能，中间到底经历了怎样的过程。</p>
+<p>真正的系统调用实现在内核中，操作系统向用户提供了API（Application
+Programming
+Interface），这些API并不实现系统调用的功能，而是去调用真正的系统调用，以实现相应的功能。</p>
+<blockquote>
+<ul>
+<li>用户程序</li>
+<li>API</li>
+<li>系统调用</li>
+</ul>
+</blockquote>
+<p>大致上是从上到下的这样一种顺序，即：用户程序中调用操作系统提供的API，而API进一步调用内核中的系统调用来实现功能。<br>
+<br>
+下面以lib/close.c为例，来具体看一看其代码实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *  linux/lib/close.c
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *  (C) 1991  Linus Torvalds
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#define __LIBRARY__
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include &amp;lt;unistd.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">_syscall1</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="n">close</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="n">fd</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>除去注释，宏定义和头文件包含，核心语句就是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">_syscall1</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="n">close</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="n">fd</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显然这是一个宏，打开close.c中唯一包含的头文件(include/unistd.h)，可以找到</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define _syscall1(type,name,atype,a) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">type name(atype a) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">{ \
+</span></span></span><span class="line"><span class="cl"><span class="cp">long __res; \
+</span></span></span><span class="line"><span class="cl"><span class="cp">__asm__ volatile (&amp;quot;int $0x80&amp;quot; \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        : &amp;quot;=a&amp;quot; (__res) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        : &amp;quot;0&amp;quot; (__NR_##name),&amp;quot;b&amp;quot; ((long)(a))); \
+</span></span></span><span class="line"><span class="cl"><span class="cp">if (__res &amp;gt;= 0) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        return (type) __res; \
+</span></span></span><span class="line"><span class="cl"><span class="cp">errno = -__res; \
+</span></span></span><span class="line"><span class="cl"><span class="cp">return -1; \
+</span></span></span><span class="line"><span class="cl"><span class="cp">}
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>那么将close.c中的宏展开就是这样</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">close</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">__res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__asm__</span> <span class="k">volatile</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="kt">int</span> <span class="err">$</span><span class="mh">0x80</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">:</span> <span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="o">=</span><span class="n">a</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span> <span class="p">(</span><span class="n">__res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">:</span> <span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span> <span class="p">(</span><span class="n">__NR_close</span><span class="p">),</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">b</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span> <span class="p">((</span><span class="kt">long</span><span class="p">)(</span><span class="n">fd</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">__res</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">__res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">errno</span> <span class="o">=</span> <span class="o">-</span><span class="n">__res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这是一个c语言的函数，在函数体中有一段内嵌汇编，可以看出，<strong>NR_close传给eax，fd强转为long后传给ebx，这二者作为输入；核心的汇编语句是int
+$0x80，即调用0x80号中断，由此可见，api本质上是通过中断的方式去调用系统调用的。<br>
+<br>
+又注意到</strong>NR_close并不在函数体中定义，那么在unistd.h这个文件中往前寻找，果然：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define __NR_open       5
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define __NR_close      6
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define __NR_waitpid    7
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define __NR_creat      8
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="p">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>原来__NR_close也是宏，定义为6，之前说过它被传递给eax，这代表这close在中断向量表中的位置为6。<br>
+<br>
+至此，我们理清了api做的事情：根据相应的系统调用号，发出中断请求int
+0x80。</p>
+<p>下一步就要研究中断指令int 0x80究竟干了一件什么事。<br>
+<br>
+在内核初始化时，调用了这样一个函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">sched_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//    ……
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">set_system_gate</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">system_call</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>实际上就是将system_call的地址写入0x80的中断描述符表（Interrupt
+Descriptor
+Table，IDT），使得中断0x80发生时，会自动调用system_call函数，此函数在kernel/system_call.s中，是一个汇编文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">!……
+</span></span><span class="line"><span class="cl">! # 这是系统调用总数。如果增删了系统调用，必须做相应修改
+</span></span><span class="line"><span class="cl">nr_system_calls = 72
+</span></span><span class="line"><span class="cl">!……
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">.globl system_call
+</span></span><span class="line"><span class="cl">.align 2
+</span></span><span class="line"><span class="cl">system_call:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">! # 检查系统调用编号是否在合法范围内
+</span></span><span class="line"><span class="cl">    cmpl \$nr_system_calls-1,%eax
+</span></span><span class="line"><span class="cl">    ja bad_sys_call
+</span></span><span class="line"><span class="cl">    push %ds
+</span></span><span class="line"><span class="cl">    push %es
+</span></span><span class="line"><span class="cl">    push %fs
+</span></span><span class="line"><span class="cl">    pushl %edx
+</span></span><span class="line"><span class="cl">    pushl %ecx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">! # push %ebx,%ecx,%edx，是传递给系统调用的参数
+</span></span><span class="line"><span class="cl">    pushl %ebx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">! # 让ds, es指向GDT，内核地址空间
+</span></span><span class="line"><span class="cl">    movl $0x10,%edx
+</span></span><span class="line"><span class="cl">    mov %dx,%ds
+</span></span><span class="line"><span class="cl">    mov %dx,%es
+</span></span><span class="line"><span class="cl">    movl $0x17,%edx
+</span></span><span class="line"><span class="cl">! # 让fs指向LDT，用户地址空间
+</span></span><span class="line"><span class="cl">    mov %dx,%fs
+</span></span><span class="line"><span class="cl">    call sys_call_table(,%eax,4)
+</span></span><span class="line"><span class="cl">    pushl %eax
+</span></span><span class="line"><span class="cl">    movl current,%eax
+</span></span><span class="line"><span class="cl">    cmpl $0,state(%eax)
+</span></span><span class="line"><span class="cl">    jne reschedule
+</span></span><span class="line"><span class="cl">    cmpl $0,counter(%eax)
+</span></span><span class="line"><span class="cl">    je reschedule
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中call sys_call_table(,%eax,4)是关键，这个寻址方式实际上表达了call
+sys_call_table + 4 *
+%eax，而eax中实际放的是系统调用号，也就是说这句话是根据调用号，在sys_call_table表中找到对应的系统调用函数，然后调用它。至于为什么是4
+* %eax呢，因为32为的系统，内存地址是32位（4 Byte）的。</p>
+<p>这个表的位置在include/linux/sys.h</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="n">sys_open</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="nf">sys_close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="nf">sys_waitpid</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="nf">sys_creat</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fn_ptr</span> <span class="n">sys_call_table</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">sys_setup</span><span class="p">,</span> <span class="n">sys_exit</span><span class="p">,</span> <span class="n">sys_fork</span><span class="p">,</span> <span class="n">sys_read</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_write</span><span class="p">,</span> <span class="n">sys_open</span><span class="p">,</span> <span class="n">sys_close</span><span class="p">,</span> <span class="n">sys_waitpid</span><span class="p">,</span> <span class="n">sys_creat</span><span class="p">,</span> <span class="n">sys_link</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_unlink</span><span class="p">,</span> <span class="n">sys_execve</span><span class="p">,</span> <span class="n">sys_chdir</span><span class="p">,</span> <span class="n">sys_time</span><span class="p">,</span> <span class="n">sys_mknod</span><span class="p">,</span> <span class="n">sys_chmod</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_chown</span><span class="p">,</span> <span class="n">sys_break</span><span class="p">,</span> <span class="n">sys_stat</span><span class="p">,</span> <span class="n">sys_lseek</span><span class="p">,</span> <span class="n">sys_getpid</span><span class="p">,</span> <span class="n">sys_mount</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_umount</span><span class="p">,</span> <span class="n">sys_setuid</span><span class="p">,</span> <span class="n">sys_getuid</span><span class="p">,</span> <span class="n">sys_stime</span><span class="p">,</span> <span class="n">sys_ptrace</span><span class="p">,</span> <span class="n">sys_alarm</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_fstat</span><span class="p">,</span> <span class="n">sys_pause</span><span class="p">,</span> <span class="n">sys_utime</span><span class="p">,</span> <span class="n">sys_stty</span><span class="p">,</span> <span class="n">sys_gtty</span><span class="p">,</span> <span class="n">sys_access</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_nice</span><span class="p">,</span> <span class="n">sys_ftime</span><span class="p">,</span> <span class="n">sys_sync</span><span class="p">,</span> <span class="n">sys_kill</span><span class="p">,</span> <span class="n">sys_rename</span><span class="p">,</span> <span class="n">sys_mkdir</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_rmdir</span><span class="p">,</span> <span class="n">sys_dup</span><span class="p">,</span> <span class="n">sys_pipe</span><span class="p">,</span> <span class="n">sys_times</span><span class="p">,</span> <span class="n">sys_prof</span><span class="p">,</span> <span class="n">sys_brk</span><span class="p">,</span> <span class="n">sys_setgid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_getgid</span><span class="p">,</span> <span class="n">sys_signal</span><span class="p">,</span> <span class="n">sys_geteuid</span><span class="p">,</span> <span class="n">sys_getegid</span><span class="p">,</span> <span class="n">sys_acct</span><span class="p">,</span> <span class="n">sys_phys</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_lock</span><span class="p">,</span> <span class="n">sys_ioctl</span><span class="p">,</span> <span class="n">sys_fcntl</span><span class="p">,</span> <span class="n">sys_mpx</span><span class="p">,</span> <span class="n">sys_setpgid</span><span class="p">,</span> <span class="n">sys_ulimit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_uname</span><span class="p">,</span> <span class="n">sys_umask</span><span class="p">,</span> <span class="n">sys_chroot</span><span class="p">,</span> <span class="n">sys_ustat</span><span class="p">,</span> <span class="n">sys_dup2</span><span class="p">,</span> <span class="n">sys_getppid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_getpgrp</span><span class="p">,</span> <span class="n">sys_setsid</span><span class="p">,</span> <span class="n">sys_sigaction</span><span class="p">,</span> <span class="n">sys_sgetmask</span><span class="p">,</span> <span class="n">sys_ssetmask</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_setreuid</span><span class="p">,</span><span class="n">sys_setregid</span><span class="p">,</span> <span class="n">sys_iam</span><span class="p">,</span> <span class="n">sys_whoami</span> <span class="p">};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>前面是系统调用函数的extern声明，最后则是这个表啦！</p>
+<p>最为核心的，也就是close系统调用本体，sys_close函数，位于fs/open.c文件中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">sys_close</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">struct</span> <span class="nc">file</span> <span class="o">*</span> <span class="n">filp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">=</span> <span class="n">NR_OPEN</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">current</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">close_on_exec</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">filp</span> <span class="o">=</span> <span class="n">current</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">filp</span><span class="p">[</span><span class="n">fd</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">current</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">filp</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">filp</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">f_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">panic</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="nl">Close</span><span class="p">:</span> <span class="n">file</span> <span class="n">count</span> <span class="n">is</span> <span class="mi">0</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="n">filp</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">f_count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">iput</span><span class="p">(</span><span class="n">filp</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">f_inode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>细节就不分析了，总之就是在做close该做的事情。</p>
+<p>好了！到此为止，我以close函数为例，由表面的api一步步深挖到最核心的系统调用实现。这样应该理清了一个系统调用的具体实现和调用过程。下一步就是关键的自己动手做啦！</p>
+<hr>
+<p>(分割线好像不太明显。。)<br>
+<br>
+我们的目标是实现iam和whoami<br>
+<br>
+首先列举一下需要做的事情：</p>
+<ol>
+<li>写sys_iam()和sys_whoami()两个系统调用函数。（废话）</li>
+<li>定义iam和whoami的API接口。</li>
+<li>修改一些文件，比如添加相应的调用号的宏定义，更改调用总数等。</li>
+<li>写应用程序测试系统调用是否成功。</li>
+</ol>
+<hr>
+<p><strong>定义API</strong></p>
+<p>在kernel文件夹内建立who.c文件，并编写以下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include &amp;lt;unistd.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include &amp;lt;errno.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include &amp;lt;asm/segment.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>    <span class="cm">/*用来保存name*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">sys_iam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/*循环存放到字符串尾*/</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">((</span><span class="n">get_fs_byte</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;</span><span class="err">\</span><span class="mi">0</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">=</span> <span class="mi">24</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">((</span><span class="n">get_fs_byte</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;</span><span class="err">\</span><span class="mi">0</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_fs_byte</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">printk</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">:%</span><span class="n">d</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">sys_whoami</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">name</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;</span><span class="err">\</span><span class="mi">0</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;</span><span class="err">\</span><span class="mi">0</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">put_fs_byte</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">name</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>简单分析一下</p>
+<blockquote>
+<p>char a[100]; /<em>用来保存name</em>/</p>
+</blockquote>
+<p>采用char[]数组来存放用户的name<br>
+<br>
+在sys_iam函数中，先检查name的字符数，超过规定的个数则返回错误代码，符合要求则再次循环，将其存入a。</p>
+<p>而在sys_whoami函数中，同样检查字符个数，符合要求后调用put_fs_byte函数，将a[]中的字符串复制到name中，利用指针返回。</p>
+<hr>
+<p><strong>用户测试程序</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define __LIBRARY__
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;unistd.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;stdio.h&amp;gt;   
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;errno.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* 功能:用户态文件,测试系统调用iam() */</span>  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* 系统调用: */</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* 第一个是函数返回值类型，第二个为函数名，第三个是参数1的数据类型，第四个是参数1的名称，依次类推 */</span>
+</span></span><span class="line"><span class="cl"><span class="n">_syscall1</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="n">iam</span><span class="p">,</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">,</span><span class="n">myname</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#define NAMELEN 50    </span><span class="cm">/* 定义最大长度为50 */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">char</span> <span class="n">myname</span><span class="p">[</span><span class="n">NAMELEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span> <span class="cm">/* 用户态下，存储名字,并且要初始化 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* argc是命令行参数的个数，argv存储了所有的命令行输入的所有参数的值 */</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* 比如./iam warm-like-spring  :得到argc=2,argv[0]=./iam,argv[1]=warm-like-spring */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    <span class="cm">/* 用于接受系统调用后的返回值 */</span>
+</span></span><span class="line"><span class="cl"> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">namelen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="cm">/* 名字的实际长度 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="mi">2</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">Input</span> <span class="n">arguments</span> <span class="n">is</span> <span class="n">less</span><span class="o">!</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;);</span>
+</span></span><span class="line"><span class="cl">       <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">namelen</span><span class="p">]</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;</span><span class="err">\</span><span class="mi">0</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">39</span><span class="p">;){</span>       <span class="cm">/* 读取并拷贝main参数接收的输入名字字符串 */</span>
+</span></span><span class="line"><span class="cl">         <span class="n">myname</span><span class="p">[</span><span class="n">namelen</span><span class="p">]</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">namelen</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">           <span class="o">++</span><span class="n">namelen</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">before</span> <span class="n">systemcall</span><span class="p">,</span> <span class="nl">myname</span><span class="p">:</span> <span class="o">%</span><span class="n">s</span><span class="p">,</span> <span class="nl">namelen</span><span class="p">:</span> <span class="o">%</span><span class="n">d</span> <span class="n">in</span> <span class="n">iam</span><span class="p">.</span><span class="n">c</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span><span class="n">myname</span><span class="p">,</span><span class="n">namelen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">     <span class="n">res</span> <span class="o">=</span> <span class="n">iam</span><span class="p">(</span><span class="n">myname</span><span class="p">);</span>  <span class="cm">/* 传递拷贝的参数进行调用 */</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span><span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">       <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">systemcall</span> <span class="n">have</span> <span class="n">bug</span><span class="p">,</span> <span class="nl">res</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="p">,</span> <span class="nl">errno</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span><span class="n">res</span><span class="p">,</span><span class="n">errno</span><span class="p">);</span>  <span class="cm">/* 打印对应的错误信息码 */</span>
+</span></span><span class="line"><span class="cl"> <span class="k">else</span>
+</span></span><span class="line"><span class="cl">     <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">systemcall</span> <span class="n">success</span><span class="p">,</span> <span class="nl">res</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span><span class="n">res</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">————————————————</span>
+</span></span><span class="line"><span class="cl"><span class="err">版权声明：本文为</span><span class="n">CSDN博主</span><span class="err">「嘻嘻作者哈哈」的原创文章</span>
+</span></span><span class="line"><span class="cl"><span class="err">原文链接：</span><span class="nl">https</span><span class="p">:</span><span class="c1">//blog.csdn.net/weixin_43971252/article/details/89714559&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里偷个懒，原博主写得很详细，就直接粘了他的代码过来。核心部分一个是上面通过宏，定义了iam的API，其次就是下面的测试main函数，用来调用API以及产生测试输出。</p>
+<p>下面同样给出whoami.c的代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define __LIBRARY__
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;unistd.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;stdio.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&amp;lt;errno.h&amp;gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* 功能:用户态文件,测试系统调用whoami() */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">_syscall2</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="n">whoami</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span><span class="p">,</span> <span class="n">myname</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#define SIZE 23
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="kt">char</span> <span class="n">myname</span><span class="p">[</span><span class="n">SIZE</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span> <span class="cm">/* 定义初始化 */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="n">res</span> <span class="o">=</span> <span class="n">whoami</span><span class="p">(</span><span class="n">myname</span><span class="p">,</span> <span class="n">SIZE</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"> <span class="k">if</span><span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">systemcall</span> <span class="n">have</span> <span class="n">bug</span><span class="p">,</span> <span class="nl">res</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="p">,</span> <span class="nl">errno</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span><span class="n">res</span><span class="p">,</span><span class="n">errno</span><span class="p">);</span> 
+</span></span><span class="line"><span class="cl">   <span class="k">else</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">       <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">systemcall</span> <span class="n">success</span><span class="p">.</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;);</span> <span class="cm">/*如果要执行testlab2.sh来测试,要把这一行注释掉*/</span>
+</span></span><span class="line"><span class="cl">      <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="o">%</span><span class="n">s</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">quot</span><span class="p">;,</span><span class="n">myname</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">————————————————</span>
+</span></span><span class="line"><span class="cl"><span class="err">版权声明：本文为</span><span class="n">CSDN博主</span><span class="err">「嘻嘻作者哈哈」的原创文章</span>
+</span></span><span class="line"><span class="cl"><span class="err">原文链接：</span><span class="nl">https</span><span class="p">:</span><span class="c1">//blog.csdn.net/weixin_43971252/article/details/89714559&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>值得注意的是，这两个文件是用户的测试程序，所以需要先挂载，以便宿主机和虚拟机之间交换文件</p>
+<blockquote>
+<p>sudo ./mount-hdc</p>
+</blockquote>
+<p>将这两个文件放在hdc/usr/root文件夹下，这也就是linux0.11启动后用户所在的根目录，方便直接进行编译操作。</p>
+<hr>
+<p><strong>中间文件修改</strong></p>
+<p>最外和最内的文件都写好了，下面需要修改一些中间文件，比如添加系统调用号，以及函数声明等来使得系统调用可以顺利进行。\</p>
+<ul>
+<li>添加系统调用号的宏定义\</li>
+</ul>
+<p>值得注意的是，不能直接修改include/unistd.h文件，因为在linux0.11系统中编译c文件，默认的头文件都在usr/include文件夹下，所以仍需要在挂载状态下，进入hdc/usr/include/unistd.h进行修改。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define __NR_iam        72
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define __NR_whoami     73&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于本来有72个系统调用，编号到71，故在最后补上两个我们自己写的。</p>
+<ul>
+<li>修改系统调用总数</li>
+</ul>
+<p>打开kernel/system_call.s文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">! # 这是系统调用总数。如果增删了系统调用，必须做相应修改
+</span></span><span class="line"><span class="cl">nr_system_calls = 72
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>找到这一行，由于我们添加了两个系统调用，故将72改为74.</p>
+<ul>
+<li>修改sys_call_table函数表 + 添加函数声明</li>
+</ul>
+<p>打开include/linux/sys.h</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">fn_ptr</span> <span class="n">sys_call_table</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">sys_setup</span><span class="p">,</span> <span class="n">sys_exit</span><span class="p">,</span> <span class="n">sys_fork</span><span class="p">,</span> <span class="n">sys_read</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_write</span><span class="p">,</span> <span class="n">sys_open</span><span class="p">,</span> <span class="n">sys_close</span><span class="p">,</span> <span class="n">sys_waitpid</span><span class="p">,</span> <span class="n">sys_creat</span><span class="p">,</span> <span class="n">sys_link</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_unlink</span><span class="p">,</span> <span class="n">sys_execve</span><span class="p">,</span> <span class="n">sys_chdir</span><span class="p">,</span> <span class="n">sys_time</span><span class="p">,</span> <span class="n">sys_mknod</span><span class="p">,</span> <span class="n">sys_chmod</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_chown</span><span class="p">,</span> <span class="n">sys_break</span><span class="p">,</span> <span class="n">sys_stat</span><span class="p">,</span> <span class="n">sys_lseek</span><span class="p">,</span> <span class="n">sys_getpid</span><span class="p">,</span> <span class="n">sys_mount</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_umount</span><span class="p">,</span> <span class="n">sys_setuid</span><span class="p">,</span> <span class="n">sys_getuid</span><span class="p">,</span> <span class="n">sys_stime</span><span class="p">,</span> <span class="n">sys_ptrace</span><span class="p">,</span> <span class="n">sys_alarm</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_fstat</span><span class="p">,</span> <span class="n">sys_pause</span><span class="p">,</span> <span class="n">sys_utime</span><span class="p">,</span> <span class="n">sys_stty</span><span class="p">,</span> <span class="n">sys_gtty</span><span class="p">,</span> <span class="n">sys_access</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_nice</span><span class="p">,</span> <span class="n">sys_ftime</span><span class="p">,</span> <span class="n">sys_sync</span><span class="p">,</span> <span class="n">sys_kill</span><span class="p">,</span> <span class="n">sys_rename</span><span class="p">,</span> <span class="n">sys_mkdir</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_rmdir</span><span class="p">,</span> <span class="n">sys_dup</span><span class="p">,</span> <span class="n">sys_pipe</span><span class="p">,</span> <span class="n">sys_times</span><span class="p">,</span> <span class="n">sys_prof</span><span class="p">,</span> <span class="n">sys_brk</span><span class="p">,</span> <span class="n">sys_setgid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_getgid</span><span class="p">,</span> <span class="n">sys_signal</span><span class="p">,</span> <span class="n">sys_geteuid</span><span class="p">,</span> <span class="n">sys_getegid</span><span class="p">,</span> <span class="n">sys_acct</span><span class="p">,</span> <span class="n">sys_phys</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_lock</span><span class="p">,</span> <span class="n">sys_ioctl</span><span class="p">,</span> <span class="n">sys_fcntl</span><span class="p">,</span> <span class="n">sys_mpx</span><span class="p">,</span> <span class="n">sys_setpgid</span><span class="p">,</span> <span class="n">sys_ulimit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_uname</span><span class="p">,</span> <span class="n">sys_umask</span><span class="p">,</span> <span class="n">sys_chroot</span><span class="p">,</span> <span class="n">sys_ustat</span><span class="p">,</span> <span class="n">sys_dup2</span><span class="p">,</span> <span class="n">sys_getppid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_getpgrp</span><span class="p">,</span> <span class="n">sys_setsid</span><span class="p">,</span> <span class="n">sys_sigaction</span><span class="p">,</span> <span class="n">sys_sgetmask</span><span class="p">,</span> <span class="n">sys_ssetmask</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys_setreuid</span><span class="p">,</span><span class="n">sys_setregid</span><span class="p">,</span> <span class="n">sys_iam</span><span class="p">,</span> <span class="n">sys_whoami</span> <span class="p">};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在最后添加上我们写的系统调用的名字。同时需要在前面也补上它们的声明</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="nf">sys_whoami</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="nf">sys_iam</span><span class="p">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<p><strong>修改Makefile文件</strong></p>
+<p>修改Makefile文件，Makefile文件在各个文件夹下都有出现，主要是用来指导编译工作的，具体我就不太了解啦~<br>
+<br>
+除去用户测试文件，我们只添加了一个who.c文件，路径是kernel/who.c，所以只需要修改kernel文件夹下的Makefile文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">OBJS</span>  <span class="o">=</span> sched.o system_call.o traps.o asm.o fork.o <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>        panic.o printk.o vsprintf.o sys.o exit.o <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>        signal.o mktime.o who.o
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在最后添加who.o</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="c">### Dependencies:
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">who.s who.o</span><span class="o">:</span> <span class="n">who</span>.<span class="n">c</span> ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">kernel</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">unistd</span>.<span class="n">h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">exit.s exit.o</span><span class="o">:</span> <span class="n">exit</span>.<span class="n">c</span> ../<span class="n">include</span>/<span class="n">errno</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">signal</span>.<span class="n">h</span> \
+</span></span><span class="line"><span class="cl">  ../<span class="n">include</span>/<span class="n">sys</span>/<span class="n">types</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">sys</span>/<span class="n">wait</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">sched</span>.<span class="n">h</span> \
+</span></span><span class="line"><span class="cl">  ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">head</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">fs</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">mm</span>.<span class="n">h</span> \
+</span></span><span class="line"><span class="cl">  ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">kernel</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">linux</span>/<span class="n">tty</span>.<span class="n">h</span> ../<span class="n">include</span>/<span class="n">termios</span>.<span class="n">h</span> \
+</span></span><span class="line"><span class="cl">  ../<span class="n">include</span>/<span class="n">asm</span>/<span class="n">segment</span>.<span class="n">h</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加</p>
+<blockquote>
+<p>who.s who.o: who.c ../include/linux/kernel.h ../include/unistd.h</p>
+</blockquote>
+<hr>
+<p><strong>测试</strong><br>
+终于到了检验成果的时候了！！！</p>
+<blockquote>
+<p>./run</p>
+</blockquote>
+<blockquote>
+<p>gcc -o iam iam.c -Wall<br>
+<br>
+gcc -o whoami whoami.c -Wall</p>
+</blockquote>
+<p>当当当当~<br>
+<img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/9.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>顺利出现了预期的结果~\</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Messiz
+    </section>
+    
+    <section class="powerby">
+        
+            New start <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Raft 分布式一致性算法">
+<title>Lab-3 Raft</title>
+
+<link rel='canonical' href='http://localhost:1313/p/lab-3-raft/'>
+
+<link rel="stylesheet" href="/scss/style.min.e8c7fca7d1c9294aa7a4f3426c225ee26540f7d94e39be0b5a4a5c8a49ca5a25.css"><meta property='og:title' content="Lab-3 Raft">
+<meta property='og:description' content="Raft 分布式一致性算法">
+<meta property='og:url' content='http://localhost:1313/p/lab-3-raft/'>
+<meta property='og:site_name' content='Messiz Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-09-18T02:15:02&#43;08:00'/><meta property='article:modified_time' content='2024-09-18T02:15:02&#43;08:00'/>
+<meta name="twitter:title" content="Lab-3 Raft">
+<meta name="twitter:description" content="Raft 分布式一致性算法">
+    <link rel="shortcut icon" href="/favicon-16x16.png" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/laya_huc75b82ffcff8acc7c63d52042ec4f01c_17252_300x0_resize_q75_box.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐦‍🔥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Messiz Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/24974985'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px">
+	<path fill="none" d="M36.5,12h-7.086l3.793-3.793c0.391-0.391,0.391-1.023,0-1.414s-1.023-0.391-1.414,0L26.586,12 h-5.172l-5.207-5.207c-0.391-0.391-1.023-0.391-1.414,0s-0.391,1.023,0,1.414L18.586,12H12.5C9.467,12,7,14.467,7,17.5v15 c0,3.033,2.467,5.5,5.5,5.5h2c0,0.829,0.671,1.5,1.5,1.5s1.5-0.671,1.5-1.5h14c0,0.829,0.671,1.5,1.5,1.5s1.5-0.671,1.5-1.5h2 c3.033,0,5.5-2.467,5.5-5.5v-15C42,14.467,39.533,12,36.5,12z M39,32.5c0,1.378-1.122,2.5-2.5,2.5h-24c-1.378,0-2.5-1.122-2.5-2.5 v-15c0-1.378,1.122-2.5,2.5-2.5h24c1.378,0,2.5,1.122,2.5,2.5V32.5z" />
+	<rect width="2.75" height="7.075" x="30.625" y="18.463" fill="#1e88e5" transform="rotate(-71.567 32.001 22)" />
+	<rect width="7.075" height="2.75" x="14.463" y="20.625" fill="#1e88e5" transform="rotate(-18.432 17.998 21.997)" />
+	<path fill="none" d="M28.033,27.526c-0.189,0.593-0.644,0.896-1.326,0.896c-0.076-0.013-0.139-0.013-0.24-0.025 c-0.013,0-0.05-0.013-0.063,0c-0.341-0.05-0.745-0.177-1.061-0.467c-0.366-0.265-0.808-0.745-0.947-1.477 c0,0-0.29,1.174-0.896,1.49c-0.076,0.05-0.164,0.114-0.253,0.164l-0.038,0.025c-0.303,0.164-0.682,0.265-1.086,0.278 c-0.568-0.051-0.947-0.328-1.136-0.821l-0.063-0.164l-1.427,0.656l0.05,0.139c0.467,1.124,1.465,1.768,2.74,1.768 c0.922,0,1.667-0.303,2.209-0.909c0.556,0.606,1.288,0.909,2.209,0.909c1.856,0,2.55-1.288,2.765-1.843l0.051-0.126l-1.427-0.657 L28.033,27.526z" />
+</svg>
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Messiz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/en/" >English</option>
+                                
+                                    <option value="http://localhost:1313/" selected>中文</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#脑裂">脑裂</a></li>
+    <li><a href="#过半票决majority-vote">过半票决（Majority Vote）</a></li>
+    <li><a href="#raft初探">Raft初探</a></li>
+    <li><a href="#log同步时序">Log同步时序</a></li>
+    <li><a href="#日志raft-log">日志（Raft Log）</a></li>
+    <li><a href="#leader选举leader-election">Leader选举（Leader Election）</a></li>
+    <li><a href="#系统故障下的机制">系统故障下的机制</a>
+      <ol>
+        <li><a href="#日志恢复log-backup">日志恢复（Log Backup）</a></li>
+        <li><a href="#快速恢复fast-backup">快速恢复（Fast Backup）</a></li>
+        <li><a href="#选举约束election-restriction">选举约束（election Restriction）</a></li>
+        <li><a href="#持久化persistence">持久化（Persistence）</a></li>
+        <li><a href="#日志快照log-snapshot">日志快照（Log Snapshot）</a></li>
+        <li><a href="#线性一致linearizability">线性一致（Linearizability）</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                分布式
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/lab-3-raft/">Lab-3 Raft</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Raft 分布式一致性算法
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 18, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 12 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    
+    <h1 id="raft">Raft
+</h1><h2 id="脑裂">脑裂
+</h2><p>对于MapReduce、GFS等分布式系统，都是一个Master节点与很多副节点组成的。这种单主结构足够简单，不会出现矛盾（毕竟master自己不会反对自己），但也带来了问题——一旦这个节点崩溃，那么整个系统不能正常工作。</p>
+<p>以Test-and-Set为例：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212630.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>实际上是单点的，我们为了提高系统的容错性，设计一个多副本的Test-and-Set服务（S1和S2）。</p>
+<p>现在，我们来假设我们有一个网络，这个网络里面有两个服务器（S1，S2），这两个服务器都是我们Test-and-Set服务的拷贝。这个网络里面还有两个客户端（C1，C2），它们需要通过Test-and-Set服务确定主节点是谁。在这个例子中，这两个客户端本身就是VMware FT中的Primary和Backup虚拟机。</p>
+<ul>
+<li>如果我们规定client需要与两个server同时交互，那么会比单点更糟糕，因为一旦一个server崩溃，则不能正常服务，导致有副本系统反而没有容错性；</li>
+<li>如果我们规定只与其中一个server交互即可，则会发生脑裂。</li>
+</ul>
+<p>当时（1980s）解决脑裂大致两种方法：</p>
+<ul>
+<li>构建不会出错的“网络”</li>
+<li>人工解决问题，出现问题时，停止提供服务，由人工检查问题</li>
+</ul>
+<h2 id="过半票决majority-vote">过半票决（Majority Vote）
+</h2><p><strong>完成任何操作，都需要过半的服务器（总服务器数的一半以上）批准来完成对应操作。</strong></p>
+<ul>
+<li>服务器总数应该为<strong>奇数</strong>；</li>
+<li>假设系统有2*F+1个服务器，那么系统最多可接受F个服务器故障（F+1个服务器正常运行），仍然可以正常工作；</li>
+<li>过半票决的一个特性是：<strong>每一个操作对应的过半服务器，必然至少包含一个服务器存在于上一个操作的过半服务器中</strong>。下面的例子说明了这一点：
+<ul>
+<li>过半票决系统的一个特性就是，最多只有一个网络分区会有过半的服务器，所以我们不可能有两个分区可以同时完成操作。这里背后更微妙的点在于，如果你总是需要过半的服务器才能完成任何操作，同时你有一系列的操作需要完成，其中的每一个操作都需要过半的服务器来批准，例如选举Raft的Leader，那么<strong>每一个操作对应的过半服务器，必然至少包含一个服务器存在于上一个操作的过半服务器中。也就是说，任意两组过半服务器，至少有一个服务器是重叠的。<strong>实际上，相比其他特性，Raft更依赖这个特性来避免脑裂。例如，当一个Raft Leader竞选成功，那么这个Leader必然凑够了</strong>过半服务器的选票</strong>，而这组过半服务器中，<strong>必然与旧Leader的过半服务器有重叠</strong>。所以，新的Leader必然知道旧Leader使用的任期号（term number），因为新Leader的过半服务器必然与旧Leader的过半服务器有重叠，而旧Leader的过半服务器中的每一个<strong>必然都知道旧Leader的任期号</strong>。类似的，任何旧Leader提交的操作，必然存在于过半的Raft服务器中，而任何新Leader的过半服务器中，必然有至少一个服务器包含了旧Leader的所有操作。这是Raft能正确运行的一个重要因素。</li>
+</ul>
+</li>
+</ul>
+<h2 id="raft初探">Raft初探
+</h2><p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212635.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Raft作为Library运行在服务中，为服务提供一致性保证。如上图，一个服务的副本由两部分组成：上半部分是<strong>应用程序（APP）（上图中是一个KV Server）</strong>，下半部分是<strong>Raft库</strong>。</p>
+<p>执行流程：</p>
+<ol>
+<li>Client发送请求至Leader节点的APP；</li>
+<li>APP将Client请求向下发送至Raft层，Raft层将操作存入日志；</li>
+<li>Raft将此操作发送值所有副本；</li>
+<li>当Leader得知过半的阶段都有了这个操作的拷贝后，发送消息至上层APP，告知APP可以实际执行这个操作了；此后所有其他副本都将操作提交至本地的APP执行，理想情况下，整个系统的所有副本都执行了此操作，APP与Raft状态应都保持一致。</li>
+</ol>
+<h2 id="log同步时序">Log同步时序
+</h2><p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212638.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>在系统正常工作没有故障时，Raft Log 同步流程的时序图如上：</p>
+<ol>
+<li>Client发送请求；</li>
+<li>Leader向其余所有副本同步消息（<strong>AppendEntries RPC</strong>，用于日志同步与心跳信号传递）；</li>
+<li>待收到超半数的确认后提交（对于上面三个副本的系统，包括Leader自身只需要额外收到一个节点的确认即可）；</li>
+<li>Leader将提交的消息同步给其他副本，通知它们可以提交操作（在Raft中，没有单独的提交信息，commit消息是携带在下一次的AppendEntries RPC中的）。</li>
+</ol>
+<h2 id="日志raft-log">日志（Raft Log）
+</h2><p>日志的作用：</p>
+<ul>
+<li>Leader用来对<strong>操作进行排序</strong>，这对于复制状态机十分重要；</li>
+<li>Follower用于<strong>临时存储操作</strong>，待收到Leader的commit消息执行操作；</li>
+<li>Leader中存放操作，如果因为网络或其他问题导致副本没有收到消息，可以进行<strong>消息重传</strong>；</li>
+<li>所有节点都会将Log持久化，这有助于节点<strong>故障后恢复状</strong>态。</li>
+</ul>
+<h2 id="leader选举leader-election">Leader选举（Leader Election）
+</h2><ul>
+<li>Raft中设置Leader的好处在于，对于一个请求，存在Leader的情况下，只需一轮交互即可取得过半服务器的确认，而对于无Leader系统，通常需要一轮消息确认一个临时Leader，第二轮消息才能实际确认请求，性能更高；</li>
+<li>在Raft生命周期中，通过**任期号（term number）**来区分不同的Leader，每个任期内最多只有一个Leader（可能没有或者有一个）；</li>
+<li>每个Raft节点都有一个<strong>选举定时器（Election Timer）</strong>，当此定时器时间耗尽之前，没有收到任何来自Leader的消息，则认为Leader已经下线，并开始一次新的选举；
+<ul>
+<li>任何一条AppendEntries消息的到达都会重置选举定时器，因此，在网络正常且节点无故障的情况下，不会进行新的选举；</li>
+<li>选举失败可能的情况：
+<ul>
+<li>可投票节点不足（网络故障或服务器关机等）</li>
+<li>分割选票（Split Vote）：如果若干节点选举定时器同时到期，同时都发出了RequestVote消息，这造成所有这些节点都无法获得足够的选票，就会导致这次选举失败。Raft不能完全避免这种情况发生，但是可以大大降低发生概率：<strong>为选举定时器随机选择超时时间，以降低多个节点同时超时的发生概率。</strong>
+<ul>
+<li>超时时间选择：<strong>下限</strong>不能低于一个心跳间隔，否则会一直超时，通常可以设置为2-3个心跳时间；<strong>上限</strong>选择取决于期望的故障恢复速度，同时要保证随机的超时时间间隔足够完成选举。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>开始一次选举时，当前服务器会<strong>增加任期号（term number）</strong>，并发出<strong>请求投票（RequestVote）RPC</strong>，这个消息会发送至其他所有节点（因为自己总会投票给自己）；</li>
+<li>相同的，选举视为一次操作的话，也需要获得超半数的同意票才能当选。每个Raft节点在一个任期内只会进行一次投票，保证了一次选举最多只会当选一个Leader；</li>
+<li>当选的Leader会立刻发送AppendEntries告知其他所有节点，当然不是直接写“我当选了Leader！”，而是附带上当前任期号，而由于Raft规定，对于某个任期，只有Leader才能发出AppendEntries消息。</li>
+</ul>
+<h2 id="系统故障下的机制">系统故障下的机制
+</h2><h3 id="日志恢复log-backup">日志恢复（Log Backup）
+</h3><p>当Raft系统发生故障时，可能系统中不同节点中保存的log不一致，下面举例说明：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>服务器</th>
+<th>Slot 10</th>
+<th>Slot 11</th>
+<th>Slot 12</th>
+<th>Slot 13</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>3</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>S2</td>
+<td>3</td>
+<td>3</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>S3</td>
+<td>3</td>
+<td>3</td>
+<td>5</td>
+<td><font style="color:#DF2A3F;">6</font></td>
+</tr>
+</tbody>
+</table></div>
+<ol>
+<li>有S1、S2、S3三个服务器，在任期3中，第一次请求三者都成功记录，第二次请求只有S2、S3记录，S1记录失败，包含三种情况（假设S3是任期3的Leader）：
+<ul>
+<li>发送给S1的消息丢了</li>
+<li>S1当时已经关机了</li>
+<li>S3在向S2发送完AppendEntries之后，在向S1发送AppendEntries之前故障了</li>
+</ul>
+</li>
+<li>继续往后看：
+<ul>
+<li>S2称为Leader后接受一个请求后崩溃，需要进行重新选举</li>
+<li>S3成功当选，获得请求，并且崩溃</li>
+</ul>
+</li>
+<li>假设下一个任期是6，并且S3当选Leader，S3会发送任期6的第一个AppendEntries RPC给其他两个follower，其中不仅包括本条log相关信息，还包括：
+<ul>
+<li>prevLogIndex 前一项log的槽位</li>
+<li>prevLogTerm 前一项log的Term number</li>
+</ul>
+</li>
+<li>S2检查是否匹配，结果发现自己前一项Log的任期为4而非5，因此会拒绝这个AppendEntries RPC，并返回False给Leader S3，S1前一项没有值，因此也将拒绝这个AE RPC。</li>
+<li>Leader中还维护了Follower的nextIndex，nextIndex的初始值为新当选的Leader的最后一条日志位置，在上例中就是13。而由于Leader收到两个Follower的False，则会减小对应的nextIndex，此时nextIndex=12，prevLogIndex=11，prevLogTerm=3，此时发送的AE消息包含了prevLogIndex后的所有条目（也就是12，13两个槽的内容）。</li>
+<li>此时S2发现prevLogIndex和prevLogTerm与自己记录相符，则接受此AE，并将后续的数据写入自己Log的相同位置（删除了Slot 12中的4，这是安全的因为4没有被commit）。</li>
+<li>S1此时仍不符合，因此还是拒绝。</li>
+<li>Leader重复前面的流程，直至S1也确认AE，并将正确Log写入。</li>
+</ol>
+<h3 id="快速恢复fast-backup">快速恢复（Fast Backup）
+</h3><p>如果Follower进度和Leader差太多（例如：差1000个任期），此时进行日志恢复就会造成巨大的时间开销（需要发送1000条AE）。</p>
+<p>一种快速恢复策略如下：</p>
+<ul>
+<li>在新Leader发送第一个AE后，每个Follower回复都附带上一些额外信息：
+<ul>
+<li>XTerm：Follower中与Leader冲突的Log对应的任期号。在之前有介绍Leader会在prevLogTerm中带上本地Log记录中，前一条Log的任期号。如果Follower在对应位置的任期号不匹配，它会拒绝Leader的AppendEntries消息，并将自己的任期号放在XTerm中。如果Follower在对应位置没有Log，那么这里会返回 -1。</li>
+<li>XIndex：这个是Follower中，对应任期号为XTerm的第一条Log条目的槽位号。</li>
+<li>XLen：如果Follower在对应位置没有Log，那么XTerm会返回-1，XLen表示空白的Log槽位数。</li>
+</ul>
+</li>
+</ul>
+<p>下面假设三个场景<br>
+<img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240917212648.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<ul>
+<li>Case 1：Follower（S1）会返回XTerm=5，XIndex=2。Leader（S2）发现自己没有任期5的日志，它会将自己本地记录的，S1的nextIndex设置到XIndex，也就是S1中，任期5的第一条Log对应的槽位号。所以，如果Leader完全没有XTerm的任何Log，那么它应该回退到XIndex对应的位置（这样，Leader发出的下一条AppendEntries就可以一次覆盖S1中所有XTerm对应的Log）。</li>
+<li>Case 2。Follower（S1）会返回XTerm=4，XIndex=1。Leader（S2）发现自己其实有任期4的日志，它会将自己本地记录的S1的nextIndex设置到本地在XTerm位置的Log条目后面，也就是槽位2。下一次Leader发出下一条AppendEntries时，就可以一次覆盖S1中槽位2和槽位3对应的Log。</li>
+<li>Case 3。Follower（S1）会返回XTerm=-1，XLen=2。这表示S1中日志太短了，以至于在冲突的位置没有Log条目，Leader应该回退到Follower最后一条Log条目的下一条，也就是槽位2，并从这开始发送AppendEntries消息。槽位2可以从XLen中的数值计算得到。</li>
+</ul>
+<h3 id="选举约束election-restriction">选举约束（election Restriction）
+</h3><ol>
+<li>候选人最后一条Log条目的任期号<strong>大于</strong>本地最后一条Log条目的任期号；</li>
+<li>或者，候选人最后一条Log条目的任期号<strong>等于</strong>本地最后一条Log条目的任期号，且候选人的Log记录长度<strong>大于等于</strong>本地Log记录的长度</li>
+</ol>
+<h3 id="持久化persistence">持久化（Persistence）
+</h3><p>Raft持久化存储三种数据：</p>
+<ol>
+<li>Log：Log记录APP的所有操作，Raft并没有规定持久化APP的运行状态，因此，Log是唯一保存APP状态的数据，当从故障恢复时，可以从Log逐条读取数据恢复APP状态；</li>
+<li>currentTerm：与voteFor保证Leader选举的正确性，新的Leader需要知道正确的Term number，假设前一个Leader故障，而剩下的两个Follower缺失一些Log，导致不知道正确Term，那么重新选举会造成新Leader存储错误Term number；</li>
+<li>voteFor：不存储voteFor会造成重复投票，造成脑裂。S1为S2投完票后故障，恢复后又收到S3的投票请求，而认为自己没有投过票，又给S3投票，可能造成两个Leader的情况发生。</li>
+</ol>
+<h3 id="日志快照log-snapshot">日志快照（Log Snapshot）
+</h3><p>Raft系统长时间运行会造成Log内容过多的情况，这对于持久化以及故障后恢复的效率会产生较大影响。因此，提出快照（Snapshots）。</p>
+<p>当Raft判断Log大小达到某个阈值时，会要求程序在Log的特定位置上，对其状态做一个快照，然后Raft丢弃这一点之前的Log。</p>
+<p>可能出现的问题：当Follower落后太多，以至于Leader产生快照丢弃的Log无法恢复时，Leader和Follower的一致性会遭到破坏。</p>
+<p>Raft的解决方案如下：</p>
+<p>引入一个新的消息类型，InstallSnapshot RPC</p>
+<p>当Follower刚刚恢复，如果它的Log短于Leader通过 AppendEntries RPC发给它的内容，那么它首先会强制Leader回退自己的Log。在某个点，Leader将不能再回退，因为它已经到了自己Log的起点。这时，Leader会将自己的快照发给Follower，之后立即通过AppendEntries将后面的Log发给Follower。</p>
+<h3 id="线性一致linearizability">线性一致（Linearizability）
+</h3><p>线性一致或者说强一致，定义了一个分布式系统正确的处理逻辑，在客户端看来，就和与单点服务交互一样。</p>
+<p>**定义：一个系统是线性一致的，**<strong>如果执行历史整体可以按照一个顺序排列，且排列顺序与客户端请求的实际时间相符合；并且，每一个读操作都看到的是最近一次写入的值。</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/lab-1-mapreduce/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lab-1-mapreduce/_hu958d513eeefe5556a31d065479ecc5ac_14205_7bffa90d1e66ca9b8184fda08a99dc7e.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Lab-1 MapReduce"
+                        
+                        data-hash="md5-jq4GZk3fs&#43;jcbgAHVstwOw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Lab-1 MapReduce</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Messiz
+    </section>
+    
+    <section class="powerby">
+        
+            New start <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

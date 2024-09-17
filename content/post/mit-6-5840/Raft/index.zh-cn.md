@@ -3,6 +3,8 @@ title: "Lab-3 Raft"
 description: Raft 分布式一致性算法
 date: 2024-09-18T02:15:02+08:00
 image: 
+categories:
+    - 分布式
 musicid:
 ---
 
