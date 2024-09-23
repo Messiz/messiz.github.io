@@ -272,7 +272,72 @@
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#模型">模型</a>
+      <ol>
+        <li><a href="#map">Map</a></li>
+        <li><a href="#reduce">Reduce</a></li>
+        <li><a href="#例子">例子</a></li>
+      </ol>
+    </li>
+    <li><a href="#实现">实现</a>
+      <ol>
+        <li><a href="#流程">流程</a></li>
+        <li><a href="#master">Master</a></li>
+        <li><a href="#容错">容错</a>
+          <ol>
+            <li><a href="#worker-failure">Worker Failure</a></li>
+            <li><a href="#master-failure">Master Failure</a></li>
+            <li><a href="#semantics-in-the-presence-of-failures">Semantics in the Presence of Failures</a></li>
+          </ol>
+        </li>
+        <li><a href="#font-stylecolorrgb5-7-59background-colorrgb253-253-254后备任务font"><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">后备任务</font></a></li>
+      </ol>
+    </li>
+    <li><a href="#改进">改进</a>
+      <ol>
+        <li><a href="#分区函数-partitioning-function">分区函数 Partitioning Function</a></li>
+        <li><a href="#排序保证-ordering-guarantees">排序保证 Ordering Guarantees</a></li>
+        <li><a href="#组合函数-combiner-function">组合函数 Combiner Function</a></li>
+        <li><a href="#输入输出类型-input-and-output-type">输入输出类型 Input and Output Type</a></li>
+        <li><a href="#副产物-side-effects">副产物 Side-effects</a></li>
+        <li><a href="#跳过错误记录-skipping-bad-records">跳过错误记录 Skipping Bad Records</a></li>
+        <li><a href="#本地执行-local-execution">本地执行 Local Execution</a></li>
+        <li><a href="#状态信息-status-information">状态信息 Status Information</a></li>
+        <li><a href="#计数器-counters">计数器 Counters</a></li>
+      </ol>
+    </li>
+    <li><a href="#性能">性能</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
     <article class="has-image main-article">
@@ -344,7 +409,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -360,8 +425,110 @@
     
     
     
-    <h2 id="测试">测试
-</h2><p>123123123123</p>
+    <h1 id="mapreduce-simplified-data-processing-on-large-cluster">MapReduce: Simplified Data Processing on Large Cluster
+</h1><h2 id="模型">模型
+</h2><p>MapReduce由Map+Reduce两部分构成</p>
+<h3 id="map">Map
+</h3><p>将输入的pair转化为中间的k/v对</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001534.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h3 id="reduce">Reduce
+</h3><p>将中间的k/v对转化为最终的输出</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001544.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h3 id="例子">例子
+</h3><p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001552.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h2 id="实现">实现
+</h2><h3 id="流程">流程
+</h3><p>!<img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001601.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<ol>
+<li>将输入文件分为M个小块，然后在集群的所有机器上启动程序</li>
+<li>用户程序分为master和worker
+<ol>
+<li>master负责分发任务</li>
+<li>worker负责处理具体工作，例如一个map任务的worker负责从输入数据中提取k/v对，并使用Map函数处理，得到中间k/v对，存储在内存缓冲区</li>
+</ol>
+</li>
+<li>内存缓冲区中的数据周期性地写入磁盘，并且由分区函数分为R个partition，并将结果交给master，master可以将这些位置信息交给负责reduce任务的worker</li>
+<li>reduce worker接到磁盘上partition的位置信息后，使用RPC来读取这些数据，然后按照key对数据进行排序</li>
+<li>reduce worker然后遍历已排序的数据，将每一个不同的key以及其对应的value集合传递给Reduce函数进行处理，并输出此分区最终的输出文件</li>
+<li>当所有的map和reduce函数完成工作后，master唤醒用户程序，返回数据</li>
+</ol>
+<h3 id="master">Master
+</h3><p>master负责调度worker，因此对于每一个map task和reduce task，都保存了其状态信息（空闲、正在处理、处理完毕），以及对于正在处理或处理完的任务，保存其工作机器的信息</p>
+<h3 id="容错">容错
+</h3><p>由于MapReduce本身设计基于大的机器集群，因此机器故障一定会发生</p>
+<h4 id="worker-failure">Worker Failure
+</h4><ul>
+<li>master定期ping各个worker，如果没有回应则认为该worker挂掉，对于出问题的worker，其<font style="color:#DF2A3F;">完成的所有map任务</font>以及<font style="color:#DF2A3F;">正在进行的map或reduce任务</font>，都将被标记为idle状态（未完成）以供重新调度。</li>
+<li>之所以完成的map任务需要重新执行，是因为由于该worker联系不上，说明对应的机器也联系不上，而完成的map任务，中间结果是保存在本机的磁盘的，因此需要重新调度执行；而reduce任务不需要是因为其输出是存储于全局的文件系统中。</li>
+<li>当A执行map失败而由B重新执行时，所有后续执行reduce的worker都会接到信息，尚未从A读取数据的worker会转而从B读取数据。</li>
+</ul>
+<h4 id="master-failure">Master Failure
+</h4><ul>
+<li>通过周期性记录checkpoint，当master宕机后，可以从最近的checkpoint恢复</li>
+</ul>
+<h4 id="semantics-in-the-presence-of-failures">Semantics in the Presence of Failures
+</h4><p>当map和reduce函数都是确定性函数时，提供与整个程序无故障顺序执行相同的输出。</p>
+<p>当map和reduce函数为非确定性函数时，提供较弱但仍然合理的语义。</p>
+<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
+<h3 id="font-stylecolorrgb5-7-59background-colorrgb253-253-254后备任务font"><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">后备任务</font>
+</h3><p>当出现拖后腿的节点时（由于某些原因导致执行慢），会造成MapReduce整体变慢。</p>
+<p>当MapReduce操作接近完成时，master会调度空闲节点执行当前剩余的正在执行的任务，当任意节点完成了该任务后，就将其标记为完成。</p>
+<h2 id="改进">改进
+</h2><h3 id="分区函数-partitioning-function">分区函数 Partitioning Function
+</h3><p>常见的分区函数：hash(key) mod R，哈希后取模</p>
+<p>对于某些特殊目标，也可以定制特殊的分区函数</p>
+<h3 id="排序保证-ordering-guarantees">排序保证 Ordering Guarantees
+</h3><p>对于一个给定的分区，其中键值对按照key按顺序排列</p>
+<h3 id="组合函数-combiner-function">组合函数 Combiner Function
+</h3><p>某些情况下，map操作产生的中间键存在大量重复，例如对于统计词频的任务，map操作会产生若干&lt;key, 1&gt;的键值对，我们可以引入组合函数，在将其发送至reduce函数前先进行合并，得到&lt;key, n&gt;这样的中间产物。注意，这里的组合函数的实现实际上与reduce函数一致，只是他们的输出不同，组合函数输出仍是中间产物，而reduce函数输出为最终结果。</p>
+<h3 id="输入输出类型-input-and-output-type">输入输出类型 Input and Output Type
+</h3><p>例如对于文本数据，输入kv对，key表示offset，value则为对应行的数据</p>
+<p>用户可以自己定义一些输入输出格式</p>
+<h3 id="副产物-side-effects">副产物 Side-effects
+</h3><p><font style="color:#DF2A3F;">没太懂</font></p>
+<p><font style="color:#DF2A3F;"></font></p>
+<h3 id="跳过错误记录-skipping-bad-records">跳过错误记录 Skipping Bad Records
+</h3><p>跳过错误记录从而避免程序崩溃，能够跳过继续执行</p>
+<h3 id="本地执行-local-execution">本地执行 Local Execution
+</h3><p>MapReduce工作在分布式系统中，难以调试，提供了简单的单体执行机制，方便用户调试</p>
+<h3 id="状态信息-status-information">状态信息 Status Information
+</h3><p>Master节点提供任务整体进度信息</p>
+<h3 id="计数器-counters">计数器 Counters
+</h3><p>提供了计数器，各worker节点统计一些计数数据，将数据汇总给master节点</p>
+<h2 id="性能">性能
+</h2><p>两个任务上进行了测试</p>
+<ol>
+<li>1tb数据排序</li>
+<li>1tb数据搜索</li>
+</ol>
 
 </section>
 
