@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="描述Lab1中MapReduce的原理以及实现">
-<title>Lab-1 MapReduce</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="2PC Two-phase commit protocal，两阶段提交协议 从角色来划分，包括一个协调者（coordinator）和若干参与者（participant）； 从阶段来">
+<title>分布式事务</title>
 
-<link rel='canonical' href='http://localhost:1313/p/lab-1-mapreduce/'>
+<link rel='canonical' href='http://localhost:1313/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/'>
 
-<link rel="stylesheet" href="/scss/style.min.e8c7fca7d1c9294aa7a4f3426c225ee26540f7d94e39be0b5a4a5c8a49ca5a25.css"><meta property='og:title' content="Lab-1 MapReduce">
-<meta property='og:description' content="描述Lab1中MapReduce的原理以及实现">
-<meta property='og:url' content='http://localhost:1313/p/lab-1-mapreduce/'>
+<link rel="stylesheet" href="/scss/style.min.e8c7fca7d1c9294aa7a4f3426c225ee26540f7d94e39be0b5a4a5c8a49ca5a25.css"><meta property='og:title' content="分布式事务">
+<meta property='og:description' content="2PC Two-phase commit protocal，两阶段提交协议 从角色来划分，包括一个协调者（coordinator）和若干参与者（participant）； 从阶段来">
+<meta property='og:url' content='http://localhost:1313/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/'>
 <meta property='og:site_name' content='Messiz Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-09-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-09-17T00:00:00&#43;00:00'/><meta property='og:image' content='http://localhost:1313/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash.jpg' />
-<meta name="twitter:title" content="Lab-1 MapReduce">
-<meta name="twitter:description" content="描述Lab1中MapReduce的原理以及实现"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='http://localhost:1313/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-06-13T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-06-13T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="分布式事务">
+<meta name="twitter:description" content="2PC Two-phase commit protocal，两阶段提交协议 从角色来划分，包括一个协调者（coordinator）和若干参与者（participant）； 从阶段来">
     <link rel="shortcut icon" href="/favicon-16x16.png" />
 
   
@@ -294,41 +293,35 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#模型">模型</a>
+    <li><a href="#优点">优点</a></li>
+    <li><a href="#缺点">缺点</a>
       <ol>
-        <li><a href="#map">Map</a></li>
-        <li><a href="#reduce">Reduce</a></li>
-        <li><a href="#例子">例子</a></li>
+        <li><a href="#同步阻塞">同步阻塞</a></li>
+        <li><a href="#单点故障">单点故障</a></li>
+        <li><a href="#数据不一致">数据不一致</a></li>
       </ol>
     </li>
-    <li><a href="#实现">实现</a>
+    <li><a href="#分布式数据库对2pc的改进">分布式数据库对2PC的改进</a>
       <ol>
-        <li><a href="#流程">流程</a></li>
-        <li><a href="#master">Master</a></li>
-        <li><a href="#容错">容错</a>
-          <ol>
-            <li><a href="#worker-failure">Worker Failure</a></li>
-            <li><a href="#master-failure">Master Failure</a></li>
-            <li><a href="#semantics-in-the-presence-of-failures">Semantics in the Presence of Failures</a></li>
-          </ol>
-        </li>
-        <li><a href="#font-stylecolorrgb5-7-59background-colorrgb253-253-254后备任务font"><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">后备任务</font></a></li>
+        <li><a href="#改进点">改进点</a></li>
       </ol>
     </li>
-    <li><a href="#改进">改进</a>
+    <li><a href="#xa规范-2pc落地实现">XA规范-2PC落地实现</a>
       <ol>
-        <li><a href="#分区函数-partitioning-function">分区函数 Partitioning Function</a></li>
-        <li><a href="#排序保证-ordering-guarantees">排序保证 Ordering Guarantees</a></li>
-        <li><a href="#组合函数-combiner-function">组合函数 Combiner Function</a></li>
-        <li><a href="#输入输出类型-input-and-output-type">输入输出类型 Input and Output Type</a></li>
-        <li><a href="#副产物-side-effects">副产物 Side-effects</a></li>
-        <li><a href="#跳过错误记录-skipping-bad-records">跳过错误记录 Skipping Bad Records</a></li>
-        <li><a href="#本地执行-local-execution">本地执行 Local Execution</a></li>
-        <li><a href="#状态信息-status-information">状态信息 Status Information</a></li>
-        <li><a href="#计数器-counters">计数器 Counters</a></li>
+        <li><a href="#mysql-xa">MySQL XA</a></li>
       </ol>
     </li>
-    <li><a href="#性能">性能</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#幂等性">幂等性</a></li>
+    <li><a href="#空回滚问题">空回滚问题</a></li>
+    <li><a href="#悬挂问题">悬挂问题</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#没有try的tcc">没有Try的TCC</a></li>
+    <li><a href="#异步tcc">异步TCC</a></li>
   </ol>
 </nav>
         </div>
@@ -340,20 +333,8 @@
 
 
             <main class="main full-width">
-    <article class="has-image main-article">
+    <article class="main-article">
     <header class="article-header">
-        <div class="article-image">
-            <a href="/p/lab-1-mapreduce/">
-                <img src="/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash_hu958d513eeefe5556a31d065479ecc5ac_14205_800x0_resize_q75_box.jpg"
-                        srcset="/p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash_hu958d513eeefe5556a31d065479ecc5ac_14205_800x0_resize_q75_box.jpg 800w, /p/lab-1-mapreduce/matt-le-SJSpo9hQf7s-unsplash_hu958d513eeefe5556a31d065479ecc5ac_14205_1600x0_resize_q75_box.jpg 1600w"
-                        width="800" 
-                        height="533" 
-                        loading="lazy"
-                        alt="Featured image of post Lab-1 MapReduce" />
-                
-            </a>
-        </div>
-    
 
     <div class="article-details">
     
@@ -368,13 +349,9 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/lab-1-mapreduce/">Lab-1 MapReduce</a>
+            <a href="/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">分布式事务</a>
         </h2>
     
-        
-        <h3 class="article-subtitle">
-            描述Lab1中MapReduce的原理以及实现
-        </h3>
         
     </div>
 
@@ -394,7 +371,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Sep 17, 2024</time>
+                <time class="article-time--published">Jun 13, 2024</time>
             </div>
         
 
@@ -409,7 +386,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 4 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -425,12 +402,13 @@
     
     
     
-    <h1 id="mapreduce-simplified-data-processing-on-large-cluster">MapReduce: Simplified Data Processing on Large Cluster
-</h1><h2 id="模型">模型
-</h2><p>MapReduce由Map+Reduce两部分构成</p>
-<h3 id="map">Map
-</h3><p>将输入的pair转化为中间的k/v对</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001534.png"
+    <h1 id="2pc">2PC
+</h1><p>Two-phase commit protocal，两阶段提交协议</p>
+<p>从角色来划分，包括一个<strong>协调者（coordinator）<strong>和若干</strong>参与者（participant）</strong>；</p>
+<p>从阶段来划分，包括**准备（prepare）<strong>和</strong>提交（commit）**阶段；</p>
+<p>示意图如下：</p>
+<p><strong>准备阶段</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232311.png"
 	
 	
 	
@@ -438,9 +416,8 @@
 	
 	
 ></p>
-<h3 id="reduce">Reduce
-</h3><p>将中间的k/v对转化为最终的输出</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001544.png"
+<p><strong>提交阶段</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232315.png"
 	
 	
 	
@@ -448,8 +425,20 @@
 	
 	
 ></p>
-<h3 id="例子">例子
-</h3><p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001552.png"
+<h2 id="优点">优点
+</h2><p>对于业务没有侵入，可以利用数据库自身的功能进行本地事务提交和回滚，而不用额外实现。</p>
+<h2 id="缺点">缺点
+</h2><h3 id="同步阻塞">同步阻塞
+</h3><p>在第一阶段，参与者执行了准备命令后，会处于等待协调者消息的同步阻塞状态，影响处理效率；</p>
+<h3 id="单点故障">单点故障
+</h3><p>其实是一主多从的结构，因此如果主节点（协调者）宕机，则整个事务都不能执行；</p>
+<p>而且如果在协调者发送准备信息后宕机，则所有参与者都将处于同步阻塞状态。</p>
+<h3 id="数据不一致">数据不一致
+</h3><p>可能由于网络问题导致某些节点没有收到提交请求，导致部分参与者提交了事务，而有些参与者没有提交。</p>
+<h2 id="分布式数据库对2pc的改进">分布式数据库对2PC的改进
+</h2><p>Percolator模型</p>
+<p>对于下面这个事务：“yes”转账100给“you”</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232320.png"
 	
 	
 	
@@ -457,78 +446,108 @@
 	
 	
 ></p>
-<h2 id="实现">实现
-</h2><h3 id="流程">流程
-</h3><p>!<img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924001601.png"
-	
-	
-	
-	loading="lazy"
-	
-	
-></p>
-<ol>
-<li>将输入文件分为M个小块，然后在集群的所有机器上启动程序</li>
-<li>用户程序分为master和worker
-<ol>
-<li>master负责分发任务</li>
-<li>worker负责处理具体工作，例如一个map任务的worker负责从输入数据中提取k/v对，并使用Map函数处理，得到中间k/v对，存储在内存缓冲区</li>
-</ol>
-</li>
-<li>内存缓冲区中的数据周期性地写入磁盘，并且由分区函数分为R个partition，并将结果交给master，master可以将这些位置信息交给负责reduce任务的worker</li>
-<li>reduce worker接到磁盘上partition的位置信息后，使用RPC来读取这些数据，然后按照key对数据进行排序</li>
-<li>reduce worker然后遍历已排序的数据，将每一个不同的key以及其对应的value集合传递给Reduce函数进行处理，并输出此分区最终的输出文件</li>
-<li>当所有的map和reduce函数完成工作后，master唤醒用户程序，返回数据</li>
-</ol>
-<h3 id="master">Master
-</h3><p>master负责调度worker，因此对于每一个map task和reduce task，都保存了其状态信息（空闲、正在处理、处理完毕），以及对于正在处理或处理完的任务，保存其工作机器的信息</p>
-<h3 id="容错">容错
-</h3><p>由于MapReduce本身设计基于大的机器集群，因此机器故障一定会发生</p>
-<h4 id="worker-failure">Worker Failure
-</h4><ul>
-<li>master定期ping各个worker，如果没有回应则认为该worker挂掉，对于出问题的worker，其<font style="color:#DF2A3F;">完成的所有map任务</font>以及<font style="color:#DF2A3F;">正在进行的map或reduce任务</font>，都将被标记为idle状态（未完成）以供重新调度。</li>
-<li>之所以完成的map任务需要重新执行，是因为由于该worker联系不上，说明对应的机器也联系不上，而完成的map任务，中间结果是保存在本机的磁盘的，因此需要重新调度执行；而reduce任务不需要是因为其输出是存储于全局的文件系统中。</li>
-<li>当A执行map失败而由B重新执行时，所有后续执行reduce的worker都会接到信息，尚未从A读取数据的worker会转而从B读取数据。</li>
+<ul>
+<li>准备阶段，yes和you两边分别新增了一条记录，yes这里data减少100，you的data增加100；同时事务管理器记录下这次操作的日志；注意这里Lock部分有数据代表这是私有数据，别的事务读取不到。</li>
+<li>yes这里的Lock获得了一个标志PK，而you这里的Lock指向了PK，说明you这里记录的更新依赖于PK这条记录；</li>
+<li>提交阶段，事务管理器只会向PK这条记录发送提交请求，PK记录会将PK标志删除，此时该条记录变为公开版本，其他事务可见；</li>
+<li>下一次访问 PK@yes 记录时会发现PK记录已经提交，所以会将 PK@yes 也删去提交；注意这里实际上会有后台线程扫描进行此操作，因此不会真的等到下一次访问才提交，不会影响执行效率。</li>
 </ul>
-<h4 id="master-failure">Master Failure
-</h4><ul>
-<li>通过周期性记录checkpoint，当master宕机后，可以从最近的checkpoint恢复</li>
+<h3 id="改进点">改进点
+</h3><ul>
+<li>提交阶段只与一个参与者交互，这个操作是原子的，解决了<strong>数据不一致</strong>问题；</li>
+<li>事务管理器会记录操作日志，在宕机后选举新的事务管理器可以通过日志继续工作，解决了<strong>单点故障</strong>问题；</li>
+<li>后台线程扫描事务状况，在事务管理宕机后会回滚各个参与者的事务（2PC中参与者没有接收到协调者消息不会进行提交或回滚操作）。</li>
 </ul>
-<h4 id="semantics-in-the-presence-of-failures">Semantics in the Presence of Failures
-</h4><p>当map和reduce函数都是确定性函数时，提供与整个程序无故障顺序执行相同的输出。</p>
-<p>当map和reduce函数为非确定性函数时，提供较弱但仍然合理的语义。</p>
-<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
-<h3 id="font-stylecolorrgb5-7-59background-colorrgb253-253-254后备任务font"><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">后备任务</font>
-</h3><p>当出现拖后腿的节点时（由于某些原因导致执行慢），会造成MapReduce整体变慢。</p>
-<p>当MapReduce操作接近完成时，master会调度空闲节点执行当前剩余的正在执行的任务，当任意节点完成了该任务后，就将其标记为完成。</p>
-<h2 id="改进">改进
-</h2><h3 id="分区函数-partitioning-function">分区函数 Partitioning Function
-</h3><p>常见的分区函数：hash(key) mod R，哈希后取模</p>
-<p>对于某些特殊目标，也可以定制特殊的分区函数</p>
-<h3 id="排序保证-ordering-guarantees">排序保证 Ordering Guarantees
-</h3><p>对于一个给定的分区，其中键值对按照key按顺序排列</p>
-<h3 id="组合函数-combiner-function">组合函数 Combiner Function
-</h3><p>某些情况下，map操作产生的中间键存在大量重复，例如对于统计词频的任务，map操作会产生若干&lt;key, 1&gt;的键值对，我们可以引入组合函数，在将其发送至reduce函数前先进行合并，得到&lt;key, n&gt;这样的中间产物。注意，这里的组合函数的实现实际上与reduce函数一致，只是他们的输出不同，组合函数输出仍是中间产物，而reduce函数输出为最终结果。</p>
-<h3 id="输入输出类型-input-and-output-type">输入输出类型 Input and Output Type
-</h3><p>例如对于文本数据，输入kv对，key表示offset，value则为对应行的数据</p>
-<p>用户可以自己定义一些输入输出格式</p>
-<h3 id="副产物-side-effects">副产物 Side-effects
-</h3><p><font style="color:#DF2A3F;">没太懂</font></p>
-<p><font style="color:#DF2A3F;"></font></p>
-<h3 id="跳过错误记录-skipping-bad-records">跳过错误记录 Skipping Bad Records
-</h3><p>跳过错误记录从而避免程序崩溃，能够跳过继续执行</p>
-<h3 id="本地执行-local-execution">本地执行 Local Execution
-</h3><p>MapReduce工作在分布式系统中，难以调试，提供了简单的单体执行机制，方便用户调试</p>
-<h3 id="状态信息-status-information">状态信息 Status Information
-</h3><p>Master节点提供任务整体进度信息</p>
-<h3 id="计数器-counters">计数器 Counters
-</h3><p>提供了计数器，各worker节点统计一些计数数据，将数据汇总给master节点</p>
-<h2 id="性能">性能
-</h2><p>两个任务上进行了测试</p>
-<ol>
-<li>1tb数据排序</li>
-<li>1tb数据搜索</li>
-</ol>
+<h2 id="xa规范-2pc落地实现">XA规范-2PC落地实现
+</h2><p>XA规范是基于2PC的，XA是对DTP（Distributed Transaction Processing）模型中的事务管理器（TM）和资源管理器（RM）之间的交互进行约束后形成的规范。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232324.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>AP：应用程序，事务发起者</p>
+<p>RM：资源管理器，可以认为是数据库，对应上面2PC中的参与者</p>
+<p>TM：事务管理器，对应2PC中的协调者</p>
+<p>实际实现时可以由一个角色实现两个功能，比如AP实现TM的功能</p>
+<h3 id="mysql-xa">MySQL XA
+</h3><ul>
+<li>Client作为AP和TM的角色;</li>
+<li>准备阶段，Client向不同的数据库（RM）发送不同的指令；</li>
+<li>提交阶段，Client根据RM返回的情况决定执行commit还是rollback。</li>
+</ul>
+<h1 id="3pc">3PC
+</h1><p>相较于2PC，多了一个预提交阶段</p>
+<p>3PC和2PC对应关系如下：</p>
+<p><strong>准备（询问参与者是否状态正常） &lt;&mdash;&gt; 无对应</strong></p>
+<p><strong>预提交（发送指令） &lt;&mdash;&gt; 准备</strong></p>
+<p><strong>提交（通知提交） &lt;&mdash;&gt; 提交</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232328.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>引入准备阶段的目的就是为了解决2PC中由于个别参与者不正常导致其他参与者锁定资源，但异常情况发生几率较小，因此额外引入的阶段会在正常情况下带来额外的时间开销，不划算。</p>
+<p>3PC同时引入了超时机制，当预提交阶段过后，如果迟迟未收到协调者提交请求，参与者会<strong>自动提交</strong>，因为在第一步准备阶段时就已经确定参与者是否都认可，因此进入预提交阶段说明所有参与者都可以执行并提交。</p>
+<p><strong>实际上3PC的设计是想解决2PC中带来的问题，但实际上并没有很好解决，反而性能更差了，3PC也没有落地实现。</strong></p>
+<h1 id="tcc">TCC
+</h1><p>2PC和3PC都是针对数据库的事务提交和回滚，但很多情况下，业务操作不止局限于数据库，也可能是发送短信，上传图片等操作，TCC就是一种<strong>业务层面的两阶段提交</strong>方法</p>
+<ul>
+<li>TCC - Try Confirm Cancel，分别指代业务层面要实现的3个方法</li>
+<li>第一阶段（Try），资源检查预留阶段；</li>
+<li>第二阶段（提交、回滚）</li>
+</ul>
+<p>例如对于一个扣款的服务，Try方法用于冻结扣款资金，Confirm用于执行真正的扣款，Cancel方法用于Try方法的回滚（资金解冻）。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232332.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>TCC对于业务有很大侵入，但是不会阻塞资源，每个方法都是直接提交事务的。</p>
+<p>如果部分Confirm失败，则会一直重试，直到成功，或者记录下来，人工处理。</p>
+<h2 id="幂等性">幂等性
+</h2><p>Try、Confirm、Cancel三个方法需要保证幂等性，因为网络问题可能造成请求多次发送，需要幂等性保证不会因为多次执行出错。</p>
+<h2 id="空回滚问题">空回滚问题
+</h2><p>Try方法由于网络问题超时而没有到达参与者，事务管理器会发出Cancel命令，如果此时收到Cancel，需要能够处理这种没有执行Try的情况下进行Cancel。</p>
+<h2 id="悬挂问题">悬挂问题
+</h2><p>在空回滚问题执行了Cancel后此前超时的Try命令到达了；在空回滚之后需要记录一下，防止这种情况下Try的再次调用。</p>
+<h1 id="tcc变体">TCC变体
+</h1><h2 id="没有try的tcc">没有Try的TCC
+</h2><p>取消了Try操作，在一阶段直接执行Confirm操作，第二阶段判断成功则无操作，失败则执行Cancel</p>
+<p>其实和2PC很像：一阶段执行操作，二阶段可能回滚；只是2PC一阶段没有提交，这里一阶段提交了。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232337.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h2 id="异步tcc">异步TCC
+</h2><p>如果某些服务很难改造，且不会影响主业务决策，可以引入可靠消息服务，通过消息服务来代替个别服务进行Try、Confirm、Cancel。</p>
+<p>Try写入消息，Confirm发送消息，Cancel取消消息发送</p>
+<h1 id="本地消息表">本地消息表
+</h1><p>这是基于最终一致性思想实现的一种方案。</p>
+<p>将<strong>业务执行</strong>和<strong>消息插入</strong>放在同一个本地事务中执行，然后执行下一个服务，如果调用成功则改变这条本地消息的状态，如果失败则会一直调用。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232347.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="事务消息">事务消息
+</h1><p>RocketMQ提供事务消息，事务开始时发送<strong>半消息</strong>（暂不能投递的消息，发送方已经将消息成功发送到了 MQ 服务端，但是服务端未收到生产者对该消息的二次确认，此时该消息被标记成“暂不能投递”状态，处于该种状态下的消息即半消息）给broker，此时消息对消费者不可见，当本地事务提交了，半事务也就提交，此时消费者可见，也就可以消费了。</p>
+<p>broker如果很久没有等到半消息提交或是回滚的消息，则会反查生产者，保证事务一致性。</p>
 
 </section>
 
@@ -601,13 +620,24 @@
 
             
                 
-<article class="">
-    <a href="/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">
+<article class="has-image">
+    <a href="/p/lab-1-mapreduce/">
         
+        
+            <div class="article-image">
+                <img src="/p/lab-1-mapreduce/_hu958d513eeefe5556a31d065479ecc5ac_14205_7bffa90d1e66ca9b8184fda08a99dc7e.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Lab-1 MapReduce"
+                        
+                        data-hash="md5-jq4GZk3fs&#43;jcbgAHVstwOw==">
+                
+            </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">分布式事务</h2>
+            <h2 class="article-title">Lab-1 MapReduce</h2>
         </div>
     </a>
 </article>

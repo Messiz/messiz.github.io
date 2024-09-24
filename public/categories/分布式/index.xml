@@ -336,6 +336,160 @@
 &lt;/ol&gt;
 </description>
         </item>
+        <item>
+        <title>分布式事务</title>
+        <link>http://localhost:1313/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</link>
+        <pubDate>Thu, 13 Jun 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/p/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</guid>
+        <description>&lt;h1 id=&#34;2pc&#34;&gt;2PC
+&lt;/h1&gt;&lt;p&gt;Two-phase commit protocal，两阶段提交协议&lt;/p&gt;
+&lt;p&gt;从角色来划分，包括一个&lt;strong&gt;协调者（coordinator）&lt;strong&gt;和若干&lt;/strong&gt;参与者（participant）&lt;/strong&gt;；&lt;/p&gt;
+&lt;p&gt;从阶段来划分，包括**准备（prepare）&lt;strong&gt;和&lt;/strong&gt;提交（commit）**阶段；&lt;/p&gt;
+&lt;p&gt;示意图如下：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;准备阶段&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232311.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;提交阶段&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232315.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;优点&#34;&gt;优点
+&lt;/h2&gt;&lt;p&gt;对于业务没有侵入，可以利用数据库自身的功能进行本地事务提交和回滚，而不用额外实现。&lt;/p&gt;
+&lt;h2 id=&#34;缺点&#34;&gt;缺点
+&lt;/h2&gt;&lt;h3 id=&#34;同步阻塞&#34;&gt;同步阻塞
+&lt;/h3&gt;&lt;p&gt;在第一阶段，参与者执行了准备命令后，会处于等待协调者消息的同步阻塞状态，影响处理效率；&lt;/p&gt;
+&lt;h3 id=&#34;单点故障&#34;&gt;单点故障
+&lt;/h3&gt;&lt;p&gt;其实是一主多从的结构，因此如果主节点（协调者）宕机，则整个事务都不能执行；&lt;/p&gt;
+&lt;p&gt;而且如果在协调者发送准备信息后宕机，则所有参与者都将处于同步阻塞状态。&lt;/p&gt;
+&lt;h3 id=&#34;数据不一致&#34;&gt;数据不一致
+&lt;/h3&gt;&lt;p&gt;可能由于网络问题导致某些节点没有收到提交请求，导致部分参与者提交了事务，而有些参与者没有提交。&lt;/p&gt;
+&lt;h2 id=&#34;分布式数据库对2pc的改进&#34;&gt;分布式数据库对2PC的改进
+&lt;/h2&gt;&lt;p&gt;Percolator模型&lt;/p&gt;
+&lt;p&gt;对于下面这个事务：“yes”转账100给“you”&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232320.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;准备阶段，yes和you两边分别新增了一条记录，yes这里data减少100，you的data增加100；同时事务管理器记录下这次操作的日志；注意这里Lock部分有数据代表这是私有数据，别的事务读取不到。&lt;/li&gt;
+&lt;li&gt;yes这里的Lock获得了一个标志PK，而you这里的Lock指向了PK，说明you这里记录的更新依赖于PK这条记录；&lt;/li&gt;
+&lt;li&gt;提交阶段，事务管理器只会向PK这条记录发送提交请求，PK记录会将PK标志删除，此时该条记录变为公开版本，其他事务可见；&lt;/li&gt;
+&lt;li&gt;下一次访问 PK@yes 记录时会发现PK记录已经提交，所以会将 PK@yes 也删去提交；注意这里实际上会有后台线程扫描进行此操作，因此不会真的等到下一次访问才提交，不会影响执行效率。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;改进点&#34;&gt;改进点
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;提交阶段只与一个参与者交互，这个操作是原子的，解决了&lt;strong&gt;数据不一致&lt;/strong&gt;问题；&lt;/li&gt;
+&lt;li&gt;事务管理器会记录操作日志，在宕机后选举新的事务管理器可以通过日志继续工作，解决了&lt;strong&gt;单点故障&lt;/strong&gt;问题；&lt;/li&gt;
+&lt;li&gt;后台线程扫描事务状况，在事务管理宕机后会回滚各个参与者的事务（2PC中参与者没有接收到协调者消息不会进行提交或回滚操作）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;xa规范-2pc落地实现&#34;&gt;XA规范-2PC落地实现
+&lt;/h2&gt;&lt;p&gt;XA规范是基于2PC的，XA是对DTP（Distributed Transaction Processing）模型中的事务管理器（TM）和资源管理器（RM）之间的交互进行约束后形成的规范。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232324.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;AP：应用程序，事务发起者&lt;/p&gt;
+&lt;p&gt;RM：资源管理器，可以认为是数据库，对应上面2PC中的参与者&lt;/p&gt;
+&lt;p&gt;TM：事务管理器，对应2PC中的协调者&lt;/p&gt;
+&lt;p&gt;实际实现时可以由一个角色实现两个功能，比如AP实现TM的功能&lt;/p&gt;
+&lt;h3 id=&#34;mysql-xa&#34;&gt;MySQL XA
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Client作为AP和TM的角色;&lt;/li&gt;
+&lt;li&gt;准备阶段，Client向不同的数据库（RM）发送不同的指令；&lt;/li&gt;
+&lt;li&gt;提交阶段，Client根据RM返回的情况决定执行commit还是rollback。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;3pc&#34;&gt;3PC
+&lt;/h1&gt;&lt;p&gt;相较于2PC，多了一个预提交阶段&lt;/p&gt;
+&lt;p&gt;3PC和2PC对应关系如下：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;准备（询问参与者是否状态正常） &amp;lt;&amp;mdash;&amp;gt; 无对应&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;预提交（发送指令） &amp;lt;&amp;mdash;&amp;gt; 准备&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;提交（通知提交） &amp;lt;&amp;mdash;&amp;gt; 提交&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232328.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;引入准备阶段的目的就是为了解决2PC中由于个别参与者不正常导致其他参与者锁定资源，但异常情况发生几率较小，因此额外引入的阶段会在正常情况下带来额外的时间开销，不划算。&lt;/p&gt;
+&lt;p&gt;3PC同时引入了超时机制，当预提交阶段过后，如果迟迟未收到协调者提交请求，参与者会&lt;strong&gt;自动提交&lt;/strong&gt;，因为在第一步准备阶段时就已经确定参与者是否都认可，因此进入预提交阶段说明所有参与者都可以执行并提交。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;实际上3PC的设计是想解决2PC中带来的问题，但实际上并没有很好解决，反而性能更差了，3PC也没有落地实现。&lt;/strong&gt;&lt;/p&gt;
+&lt;h1 id=&#34;tcc&#34;&gt;TCC
+&lt;/h1&gt;&lt;p&gt;2PC和3PC都是针对数据库的事务提交和回滚，但很多情况下，业务操作不止局限于数据库，也可能是发送短信，上传图片等操作，TCC就是一种&lt;strong&gt;业务层面的两阶段提交&lt;/strong&gt;方法&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TCC - Try Confirm Cancel，分别指代业务层面要实现的3个方法&lt;/li&gt;
+&lt;li&gt;第一阶段（Try），资源检查预留阶段；&lt;/li&gt;
+&lt;li&gt;第二阶段（提交、回滚）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;例如对于一个扣款的服务，Try方法用于冻结扣款资金，Confirm用于执行真正的扣款，Cancel方法用于Try方法的回滚（资金解冻）。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232332.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;TCC对于业务有很大侵入，但是不会阻塞资源，每个方法都是直接提交事务的。&lt;/p&gt;
+&lt;p&gt;如果部分Confirm失败，则会一直重试，直到成功，或者记录下来，人工处理。&lt;/p&gt;
+&lt;h2 id=&#34;幂等性&#34;&gt;幂等性
+&lt;/h2&gt;&lt;p&gt;Try、Confirm、Cancel三个方法需要保证幂等性，因为网络问题可能造成请求多次发送，需要幂等性保证不会因为多次执行出错。&lt;/p&gt;
+&lt;h2 id=&#34;空回滚问题&#34;&gt;空回滚问题
+&lt;/h2&gt;&lt;p&gt;Try方法由于网络问题超时而没有到达参与者，事务管理器会发出Cancel命令，如果此时收到Cancel，需要能够处理这种没有执行Try的情况下进行Cancel。&lt;/p&gt;
+&lt;h2 id=&#34;悬挂问题&#34;&gt;悬挂问题
+&lt;/h2&gt;&lt;p&gt;在空回滚问题执行了Cancel后此前超时的Try命令到达了；在空回滚之后需要记录一下，防止这种情况下Try的再次调用。&lt;/p&gt;
+&lt;h1 id=&#34;tcc变体&#34;&gt;TCC变体
+&lt;/h1&gt;&lt;h2 id=&#34;没有try的tcc&#34;&gt;没有Try的TCC
+&lt;/h2&gt;&lt;p&gt;取消了Try操作，在一阶段直接执行Confirm操作，第二阶段判断成功则无操作，失败则执行Cancel&lt;/p&gt;
+&lt;p&gt;其实和2PC很像：一阶段执行操作，二阶段可能回滚；只是2PC一阶段没有提交，这里一阶段提交了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232337.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;异步tcc&#34;&gt;异步TCC
+&lt;/h2&gt;&lt;p&gt;如果某些服务很难改造，且不会影响主业务决策，可以引入可靠消息服务，通过消息服务来代替个别服务进行Try、Confirm、Cancel。&lt;/p&gt;
+&lt;p&gt;Try写入消息，Confirm发送消息，Cancel取消消息发送&lt;/p&gt;
+&lt;h1 id=&#34;本地消息表&#34;&gt;本地消息表
+&lt;/h1&gt;&lt;p&gt;这是基于最终一致性思想实现的一种方案。&lt;/p&gt;
+&lt;p&gt;将&lt;strong&gt;业务执行&lt;/strong&gt;和&lt;strong&gt;消息插入&lt;/strong&gt;放在同一个本地事务中执行，然后执行下一个服务，如果调用成功则改变这条本地消息的状态，如果失败则会一直调用。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240924232347.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;事务消息&#34;&gt;事务消息
+&lt;/h1&gt;&lt;p&gt;RocketMQ提供事务消息，事务开始时发送&lt;strong&gt;半消息&lt;/strong&gt;（暂不能投递的消息，发送方已经将消息成功发送到了 MQ 服务端，但是服务端未收到生产者对该消息的二次确认，此时该消息被标记成“暂不能投递”状态，处于该种状态下的消息即半消息）给broker，此时消息对消费者不可见，当本地事务提交了，半事务也就提交，此时消费者可见，也就可以消费了。&lt;/p&gt;
+&lt;p&gt;broker如果很久没有等到半消息提交或是回滚的消息，则会反查生产者，保证事务一致性。&lt;/p&gt;
+</description>
+        </item>
         
     </channel>
 </rss>
