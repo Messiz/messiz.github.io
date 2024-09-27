@@ -7,7 +7,46 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Messiz</copyright>
-        <lastBuildDate>Wed, 18 Sep 2024 02:15:02 +0800</lastBuildDate><atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 27 Sep 2024 23:29:01 +0800</lastBuildDate><atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>最左匹配原则</title>
+        <link>http://localhost:1313/p/%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99/</link>
+        <pubDate>Fri, 27 Sep 2024 23:29:01 +0800</pubDate>
+        
+        <guid>http://localhost:1313/p/%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99/</guid>
+        <description>&lt;p&gt;在学习MySQL索引的过程中遇到了最左匹配原则这个概念，由于我有些钻牛角尖的精神，其中有些问题开始没有想明白，现在可能了解了（带有一点自己的猜测），记录一下，帮助自己加深印象~&lt;/p&gt;
+&lt;h1 id=&#34;什么是最左匹配原则&#34;&gt;什么是最左匹配原则
+&lt;/h1&gt;&lt;p&gt;最左匹配原则是基于联合索引产生的概念，至于联合索引是指将一条记录的某几列共同形成一个索引，举例来说，如果要以A，B，C三列形成一个联合索引，应该通过如下语句：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;ALTER&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;TABLE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;table_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;ADD&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;INDEX&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;index_name&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以InnoDB为例，其索引是由B+树存储的，由于B+树的特性，对于联合索引来说，B在A固定的情况下是有序的，否则是无序的；同理C在A、B均固定的情况下是有序的，否则是无序的。也就引出了最左匹配原则，我简单自己概括一下就是：&lt;/p&gt;
+&lt;p&gt;对于联合索引来说，是从左向右匹配的，不能跳过某个索引列，同时在遇到范围查询（&amp;gt; &amp;lt; != between like 等）后会失效。&lt;/p&gt;
+&lt;p&gt;用上面的例子来说，对于查询条件&amp;quot;A = 1, B = 2, C = 3&amp;quot;来说，三个条件都是可以利用索引的，而对于&amp;quot;B = 2, C = 3&amp;quot;，由于跳过了A，是无法利用索引的；此外对于&amp;quot;A = 1, B &amp;gt; 2, C = 3&amp;quot;，A和B可以利用索引，而C不行。&lt;/p&gt;
+&lt;h1 id=&#34;原理是什么&#34;&gt;原理是什么
+&lt;/h1&gt;&lt;p&gt;其实原理很简单，前面说到，对于联合索引而言，除了最左侧的索引列是由B+树本身保证其顺序外，其余列都是全局无序，局部有序的。全局无序很好理解，局部有序则是说，如果其左侧的索引列固定，则在这个范围内该列是有序的。举例来说：当A = 1时，有若干条记录，那么在此范围内，B是有序的。&lt;/p&gt;
+&lt;h1 id=&#34;为什么不能跳过某个索引列&#34;&gt;为什么不能跳过某个索引列？
+&lt;/h1&gt;&lt;p&gt;很简单，如果跳过A，那么B是全局无序的，也就是说，对于B = 2这样的条件，没办法通过B+树去在O(logN)内快速定位，需要遍历所有记录。&lt;/p&gt;
+&lt;h1 id=&#34;为什么范围后不能利用索引&#34;&gt;为什么范围后不能利用索引？
+&lt;/h1&gt;&lt;p&gt;这是我困扰的点，因为就算能够利用索引，对于最左列之外的索引列，都需要进行顺序查找，而非B+树的k分查找，时间复杂度是线性的。&lt;/p&gt;
+&lt;p&gt;其实是这样的，对于&amp;quot;A = 1, B = 2, C = 3&amp;quot;这样的条件，我们在找到A = 1的第一条记录后，顺序遍历，直到遇见第一个A != 1的记录，中间全是满足第一个条件的记录；同理，顺序遍历找到第一个B = 2与第一个B != 2的记录，则中间都是满足条件A = 1，B = 2的记录；C也同理。如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Messiz/image-bed/test/20240927232837.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;我们可以逐层确定各索引列的范围。&lt;/p&gt;
+&lt;p&gt;而对于&amp;quot;A = 1, B &amp;gt; 2, C = 3&amp;quot;这样的条件，C的搜索不再是B范围的子集，而是整个B的范围，因为C = 3在B &amp;gt; 2的所有记录中是无序的，因此不能找到边界即停止查找，而是要查找B &amp;gt; 2的所有记录。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Lab-3 Raft</title>
         <link>http://localhost:1313/p/lab-3-raft/</link>
         <pubDate>Wed, 18 Sep 2024 02:15:02 +0800</pubDate>
